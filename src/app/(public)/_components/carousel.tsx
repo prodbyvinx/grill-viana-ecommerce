@@ -33,8 +33,8 @@ export default function PicCarousel() {
               <CarouselItem>...</CarouselItem>
               <CarouselItem>...</CarouselItem>
             </CarouselContent>
-            <CarouselPrevious className="bg-red-800 text-white border-red-800"/>
-            <CarouselNext className="bg-red-800 text-white border-red-800"/>
+            <CarouselPrevious className="bg-red-800 text-white border-none"/>
+            <CarouselNext className="bg-red-800 text-white border-none"/>
           </Carousel>
         </div>
       </section>
