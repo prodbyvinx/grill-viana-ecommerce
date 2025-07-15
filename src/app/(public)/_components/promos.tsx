@@ -8,7 +8,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Star } from "lucide-react";
-import CardPromo from '../_components/cardpromo'
+import CardPromo from './cardpromo'
 
 export default function Promos() {
   return (
@@ -31,7 +31,7 @@ export default function Promos() {
             <CardPromo />
           </div>
         </div>
-        <div className="mt-8">
+        <div className="m-8">
           <Button className="bg-red-700 w-auto h-auto rounded-md hover:bg-red-800 cursor-pointer">
             <span className="text-base">Ver mais promoções!</span>
           </Button>

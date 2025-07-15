@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ShoppingCart, User, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import SearchBar from "./searchbar";
 
 export default function Header() {
   return (
@@ -22,14 +23,7 @@ export default function Header() {
             />
           </Link>
           <div className="relative w-full max-w-md">
-            <input
-              type="search"
-              placeholder="Pesquisar"
-              className="w-full h-12 pl-4 pr-10 py-2 font-medium rounded-full bg-white focus:outline-none focus:ring-2 focus:ring-gray-400"
-            />
-            <button className="absolute h-12 w-12 top-1/2 right-0 -translate-y-1/2 bg-[#a30d0d] hover:bg-red-800 p-2 rounded-full flex items-center justify-center">
-              <Search className="text-white h-6" />
-            </button>
+            <SearchBar />
           </div>
         </div>
 
