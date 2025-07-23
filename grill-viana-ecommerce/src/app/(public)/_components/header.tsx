@@ -1,37 +1,50 @@
-import Link from 'next/link'
-import Image from 'next/image'
-import { Ham, ChefHat, Briefcase, CalendarFold, Sprout } from 'lucide-react'
+"use client";
 
-export function Header() {
-    return(
-        <header className="h-30 w-full sticky">
-            <section id="headerInfo" className="h-full flex items-center justify-center gap-12 lg:gap-16">
-                <Link href="/catalogo" className='text-base text-gray-600 font-semibold'>Catálogo</Link>
-                <Link href="/faq" className='text-base text-gray-600 font-semibold'>FAQ</Link>
+import Link from "next/link";
+import Image from "next/image";
+import { ShoppingCart, User, Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import SearchBar from "./searchbar";
 
-                <Link href="/">
-                <Image
-                src="/images/black-logo.png"
-                width={120}
-                height={120}
-                alt="Logo Grill Viana"
-                priority
-                quality={100}
+export default function Header() {
+  return (
+    <header className="w-full bg-gray-100 px-6 py-4">
+      <div className="max-w-[93%] mx-auto flex items-center justify-between gap-6">
+        {/* 1. Logo + Barra de busca */}
+        <div className="flex items-center gap-6 flex-1 min-w-[200px]">
+          <Link href="/">
+            <Image
+              src="/images/black-logo.png"
+              width={150}
+              height={150}
+              alt="Logo Grill Viana"
+              priority
+              quality={100}
+            />
+          </Link>
+          <div className="relative w-full max-w-md">
+            <SearchBar />
+          </div>
+        </div>
 
-                ></Image>
-                </Link>
-                
-                <Link href="/contato" className='text-base text-gray-600 font-semibold'>Contato</Link >
-                <Link href="/sobre" className='text-base text-gray-600 font-semibold'>Sobre a Loja</Link>
-                
-            </section>
-            <section id='headerLinks' className="flex items-center justify-center gap-10 lg:gap-20 py-4">
-                <Link href="" className='text-base text-gray-600 font-semibold flex flex-col items-center gap-2'><Ham size={34}/>Churras com Amigos</Link>
-                <Link href="" className='text-base text-gray-600 font-semibold flex flex-col items-center gap-2'><ChefHat size={34}/>Pro Chef</Link>
-                <Link href="" className='text-base text-gray-600 font-semibold flex flex-col items-center gap-2'><Briefcase size={34}/>Portáteis</Link>
-                <Link href="" className='text-base text-gray-600 font-semibold flex flex-col items-center gap-2'><CalendarFold size={34}/>Para Todos os Dias</Link>
-                <Link href="" className='text-base text-gray-600 font-semibold flex flex-col items-center gap-2'><Sprout size={34}/>Vida ao Ar Livre</Link>
-            </section>
-        </header>
-    )
+        {/* 2. Navegação central */}
+        <nav className="hidden lg:flex items-center gap-10 flex-shrink-0">
+          <Link href="/catalogo" className="text-md text-gray-700 font-medium">Catálogo</Link>
+          <Link href="/faq" className="text-md text-gray-700 font-medium">FAQ</Link>
+          <Link href="/contato" className="text-md text-gray-700 font-medium">Contato</Link>
+          <Link href="/sobre" className="text-md text-gray-700 font-medium">Sobre a Loja</Link>
+        </nav>
+
+        {/* 3. Ícones */}
+        <div className="flex items-center gap-4">
+          <Button variant="link" className="text-gray-700">
+            <ShoppingCart size={28}/>
+          </Button>
+          <Button variant="link" className="text-gray-700">
+            <User size={28}/>
+          </Button>
+        </div>
+      </div>
+    </header>
+  );
 }
