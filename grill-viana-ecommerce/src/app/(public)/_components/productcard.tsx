@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardContent,
@@ -9,7 +8,7 @@ import {
 import Image from "next/image";
 import { Star, Eye } from "lucide-react";
 
-type Product = {
+export type Product = {
   id: number;
   name: string;
   description: string;
@@ -19,6 +18,7 @@ type Product = {
   rating?: number;
   ratingCount?: number;
   isNew?: boolean;
+  category?: string;
 };
 
 export default function ProductCard({ product }: { product: Product }) {
