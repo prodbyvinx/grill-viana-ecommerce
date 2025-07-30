@@ -4,7 +4,7 @@ export default function Conditions() {
   return (
     <>
       <section>
-        <div className="bg-gray-100 h-50 flex items-center justify-center gap-36 text-gray-600">
+        <div className="bg-white h-50 flex items-center justify-center gap-36 text-gray-600">
           <div className="flex items-start gap-2">
             <Truck className="self-center h-12 w-12 mr-2" />
             <div className="flex flex-col">

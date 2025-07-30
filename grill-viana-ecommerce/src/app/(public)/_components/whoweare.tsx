@@ -4,7 +4,7 @@ import { Badge, BadgeCheck } from "lucide-react";
 export default function WhoWeAre() {
   return (
     <>
-      <section className="py-8 w-full flex bg-gray-100 justify-center items-center">
+      <section className="py-8 w-full flex bg-white justify-center items-center">
         <div className="grid grid-cols-2 gap-3 w-[70%]">
           <main>
             <Image

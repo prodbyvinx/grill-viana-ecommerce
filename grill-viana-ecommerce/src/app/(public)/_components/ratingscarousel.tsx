@@ -25,7 +25,7 @@ import { Star } from "lucide-react";
 export default function RatingsCarousel() {
   return (
     <>
-      <section className="flex justify-center mb-8 bg-gray-100">
+      <section className="flex justify-center mb-8 bg-white">
         <div className="w-full h-80 flex justify-center items-center">
           <Carousel
             className="w-[80%]"

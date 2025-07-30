@@ -2,25 +2,26 @@
 
 import * as React from "react";
 import { useState, useMemo, useEffect } from "react";
-import CatalogFilters, { Filters } from "@/app/(public)/catalogo/_components/catalogfilters";
+import CatalogFilters, { Filters } from "./_components/catalogfilters";
 import ProductCard, { Product } from "@/app/(public)/_components/productcard";
 import Header from "../_components/header";
 import CatalogContent from "./_components/catalogcontent";
 import BackButton from "../_components/backbutton";
+import productsData from "@/../public/data/products.json";
 
 export default function CatalogPage() {
   const [filters, setFilters] = useState<Filters>({});
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    fetch("@/app/(public)/catalogo/data/products.json")
-      .then((res) => res.json())
-      .then((data: Product[]) => setProducts(data));
+    setProducts(productsData);
   }, []);
 
   const filteredProducts = useMemo(() => {
     return products.filter((p) => {
       if (filters.category && p.category !== filters.category) return false;
+      if (filters.type && p.type !== filters.type) return false;
+      if (filters.finalidade && p.finalidade !== filters.finalidade) return false;
       if (filters.minPrice != null && p.price < filters.minPrice) return false;
       if (filters.maxPrice != null && p.price > filters.maxPrice) return false;
       return true;
@@ -29,10 +30,10 @@ export default function CatalogPage() {
 
   return (
     <>
-      <section className="bg-gray-100 h-[100vh]">
+      <section className="bg-white h-[100vh] overflow-auto">
         <Header />
         <BackButton />
-        <div className="w-full flex justify-center items-center my-8">
+        <div className="w-full flex justify-center items-center mb-8">
           <div className="flex w-[70%] flex-col text-center gap-3">
             <h1 className="text-3xl font-bold">
               Nosso <span className="text-red-800">Catálogo</span>
@@ -47,7 +48,7 @@ export default function CatalogPage() {
           </div>
         </div>
 
-        <div className="container mx-auto p-4">
+        <div className="container ml-[5%]">
           <CatalogFilters
             filters={filters}
             onFilterChange={(field, value) =>
@@ -56,7 +57,9 @@ export default function CatalogPage() {
           />
 
         </div>
-        <CatalogContent products={filteredProducts} />
+        <div className="px-[5%] bg-white">
+          <CatalogContent products={filteredProducts}/>
+        </div>
       </section>
     </>
   );

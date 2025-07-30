@@ -19,6 +19,8 @@ export type Product = {
   ratingCount?: number;
   isNew?: boolean;
   category?: string;
+  type?: string;
+  finalidade?: string;
 };
 
 export default function ProductCard({ product }: { product: Product }) {

@@ -1,20 +1,10 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Star } from "lucide-react";
-import CardPromo from "./productcard";
 import ProductCard from "./productcard";
+import Link from "next/link";
 
 export default function Promos() {
   return (
     <>
-      <section className="bg-gray-100 h-auto w-full flex flex-col justify-center items-center">
+      <section className="bg-white h-auto w-full flex flex-col justify-center items-center">
         <h2 className="font-bold text-xl">
           Veja abaixo nossas <span className="text-red-800">Promoções</span>!
         </h2>
@@ -64,10 +54,10 @@ export default function Promos() {
             />
           </div>
         </div>
-        <div className="m-8">
-          <Button className="bg-red-700 w-auto h-auto rounded-md hover:bg-red-800 cursor-pointer">
-            <span className="text-base">Ver mais promoções!</span>
-          </Button>
+        <div className="my-8 bg-red-800 rounded-md hover:bg-red-900 transition-colors duration-300 px-4 py-2 text-center">
+          <Link className="cursor-pointer" href="/catalogo">
+            <span className="text-base font-medium text-white">Ver mais produtos</span>
+          </Link>
         </div>
       </section>
     </>

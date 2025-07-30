@@ -8,7 +8,7 @@ import SearchBar from "./searchbar";
 
 export default function Header() {
   return (
-    <header className="w-full bg-gray-100 px-6 py-4">
+    <header className="w-full bg-gray-50 px-6 py-4">
       <div className="max-w-[93%] mx-auto flex items-center justify-between gap-6">
         {/* 1. Logo + Barra de busca */}
         <div className="flex items-center gap-6 flex-1 min-w-[200px]">

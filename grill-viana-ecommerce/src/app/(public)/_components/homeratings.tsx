@@ -5,7 +5,7 @@ import RatingsCarousel from "./ratingscarousel";
 export default function HomeRatings() {
   return (
     <>
-      <section className="bg-gray-100">
+      <section className="bg-white">
         <div className="text-center p-8">
           <h1 className="font-extrabold text-3xl mb-3">
             <span className="text-red-800">Avaliações </span>dos Clientes

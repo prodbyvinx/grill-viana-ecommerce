@@ -12,6 +12,8 @@ export type Filters = {
   category?: string;
   minPrice?: number;
   maxPrice?: number;
+  type?: string;
+  finalidade?: string;
 };
 
 interface CatalogFiltersProps {
@@ -24,22 +26,70 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
   onFilterChange,
 }) => {
   return (
-    <div className="flex flex-wrap gap-4 mb-8 ml-[5%]">
-      {/* Filtro de Categoria */}
-      <div className="flex items-end">
+    <div className="flex flex-wrap gap-4 mb-8">
+      {/* Filtro de Material */}
+      <div className="flex flex-col">
+        <label htmlFor="minPrice" className="text-sm font-medium mb-1">
+          Material
+        </label>
         <Select
           value={filters.category ?? "all"}
           onValueChange={(val) =>
             onFilterChange("category", val === "all" ? undefined : val)
           }
         >
-          <SelectTrigger className="w-48">
-            <SelectValue placeholder="Categoria" />
+          <SelectTrigger className="w-48 bg-white">
+            <SelectValue placeholder="Material" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todos</SelectItem>
             <SelectItem value="inox">Inox</SelectItem>
             <SelectItem value="aço">Aço Galvanizado</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Filtro de Tipo */}
+      <div className="flex flex-col">
+        <label htmlFor="minPrice" className="text-sm font-medium mb-1">
+          Tipo de Fundo
+        </label>
+        <Select
+          value={filters.type ?? "all"}
+          onValueChange={(val) =>
+            onFilterChange("type", val === "all" ? undefined : val)
+          }
+        >
+          <SelectTrigger className="w-48 bg-white">
+            <SelectValue placeholder="Tipo" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos</SelectItem>
+            <SelectItem value="fechada">Fechada</SelectItem>
+            <SelectItem value="aberta">Aberta</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Filtro de Finalidade */}
+      <div className="flex flex-col">
+        <label htmlFor="minPrice" className="text-sm font-medium mb-1">
+          Finalidade
+        </label>
+        <Select
+          value={filters.finalidade ?? "all"}
+          onValueChange={(val) =>
+            onFilterChange("finalidade", val === "all" ? undefined : val)
+          }
+        >
+          
+          <SelectTrigger className="w-48 bg-white">
+            <SelectValue placeholder="Finalidade" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos</SelectItem>
+            <SelectItem value="casual">Casual</SelectItem>
+            <SelectItem value="profissional">Profissional</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -60,7 +110,7 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
               e.target.value ? Number(e.target.value) : undefined
             )
           }
-          className="w-32"
+          className="w-32 bg-white"
         />
       </div>
 
@@ -80,7 +130,7 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
               e.target.value ? Number(e.target.value) : undefined
             )
           }
-          className="w-32"
+          className="w-32 bg-white"
         />
       </div>
     </div>

@@ -1,7 +1,5 @@
 "use client";
-
-import { Card, CardContent } from "@/components/ui/card";
-
+import Image from "next/image";
 import Autoplay from "embla-carousel-autoplay"
 
 import {
@@ -29,9 +27,7 @@ export default function PicCarousel() {
             ]}
           >
             <CarouselContent>
-              <CarouselItem>...</CarouselItem>
-              <CarouselItem>...</CarouselItem>
-              <CarouselItem>...</CarouselItem>
+              <CarouselItem><Image src="/images/i60_capa.png" alt="Churrasqueira Inox 60cm" width={300} height={300} /></CarouselItem>
             </CarouselContent>
             <CarouselPrevious className="bg-red-800 text-white border-none"/>
             <CarouselNext className="bg-red-800 text-white border-none"/>
