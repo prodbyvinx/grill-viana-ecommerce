@@ -1,9 +1,16 @@
+'use client';
+
 import Header from "../_components/header";
 import CatalogContent from "./_components/catalogcontent";
 import BackButton from "../_components/backbutton";
-import CatalogFilters from "./_components/catalogfilters";
+import CatalogFilters, { Filters } from "./_components/catalogfilters";
+import { useState } from 'react';
+import React from "react";
 
 export default function Catalogo() {
+
+  const [filters, setFilters] = useState<Filters>({});
+
   return (
     <>
       <section className="bg-gray-100">
@@ -23,9 +30,12 @@ export default function Catalogo() {
             </p>
           </div>
         </div>
-        <CatalogFilters></CatalogFilters>
-        <CatalogContent />
-      </section>
+        <CatalogFilters filters={filters}
+          onFilterChange={(field, value) =>
+            setFilters(prev => ({ ...prev, [field]: value }))}>
+        </CatalogFilters>
+      <CatalogContent />
+    </section >
     </>
   );
 }

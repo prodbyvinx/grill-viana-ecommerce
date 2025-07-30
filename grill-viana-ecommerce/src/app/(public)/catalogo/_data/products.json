@@ -5,7 +5,7 @@
     "price": 799.90,
     "image": "/images/fixa.png",
     "description": "Alta durabilidade com acabamento em aço inox.",
-    "material": "inox",
+    "category": "inox",
     "tipo": "fechada",
     "finalidade": "familiar",
     "grelhas": 1
@@ -16,7 +16,7 @@
     "price": 459.90,
     "image": "/images/camping.png",
     "description": "Ideal para espaços pequenos sem abrir mão do sabor.",
-    "material": "aço",
+    "category": "aço",
     "tipo": "aberta",
     "finalidade": "camping",
     "grelhas": 1
@@ -27,7 +27,7 @@
     "price": 999.90,
     "image": "/images/espeteira.png",
     "description": "Modelo para churrasqueiros exigentes e profissionais.",
-    "material": "inox",
+    "category": "inox",
     "tipo": "aberta",
     "finalidade": "familiar",
     "grelhas": 2
@@ -38,7 +38,7 @@
     "price": 429.90,
     "image": "/images/i60_capa.png",
     "description": "Portátil em inox, acompanha grelha tipo moeda, ideal para família.",
-    "material": "inox",
+    "category": "inox",
     "tipo": "fechada",
     "finalidade": "familiar",
     "grelhas": 1
@@ -49,7 +49,7 @@
     "price": 349.90,
     "image": "/images/galvanizada_g60.png",
     "description": "Grande, portátil, em aço galvanizado 60×75 cm — bestseller da Grill Viana.",
-    "material": "aço",
+    "category": "aço",
     "tipo": "fechada",
     "finalidade": "familiar",
     "grelhas": 1
@@ -58,9 +58,9 @@
     "id": 6,
     "name": "Churrasqueira Inox Mini Bancada Móvel",
     "price": 409.90,
-    "image": "/images/mini_bancada_inox.png",
+    "image": "/images/mini_bancada_inox.jpg",
     "description": "Modelo compacto em inox, ideal para balcões e pequenos espaços.",
-    "material": "inox",
+    "category": "inox",
     "tipo": "aberta",
     "finalidade": "camping",
     "grelhas": 1
@@ -69,9 +69,9 @@
     "id": 7,
     "name": "Churrasqueira Inox Grande Pé Fixo 60×35×75 cm",
     "price": 439.90,
-    "image": "/images/fixa_grande.png",
+    "image": "/images/fixa_grande.jpg",
     "description": "Pé fixo, inox completo, 60cm de largura – robusta e resistente.",
-    "material": "inox",
+    "category": "inox",
     "tipo": "fechada",
     "finalidade": "familiar",
     "grelhas": 2
@@ -82,7 +82,7 @@
     "price": 489.90,
     "image": "/images/inox_duas_grelhas.png",
     "description": "Leve, duas grelhas tipo moeda – muito bem avaliada no Mercado Livre.",
-    "material": "inox",
+    "category": "inox",
     "tipo": "aberta",
     "finalidade": "familiar",
     "grelhas": 2

@@ -1,63 +1,90 @@
-"use client";
-
+import * as React from "react";
 import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { ChevronUp } from "lucide-react";
-import { useState } from "react";
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 
-const filters = {
-  material: ["Inox", "Aço", "Ferro"],
-  tipo: ["Aberta", "Fechada", "Maleta"],
-  finalidade: ["Camping", "Churrasco", "Casa"],
-  grelhas: ["1", "2", "3+"],
+export type Filters = {
+  category?: string;
+  minPrice?: number;
+  maxPrice?: number;
 };
 
-export default function CatalogFilters() {
-  const [selected, setSelected] = useState({
-    material: "",
-    tipo: "",
-    finalidade: "",
-    grelhas: "",
-  });
+interface CatalogFiltersProps {
+  filters: Filters;
+  onFilterChange: (field: keyof Filters, value?: string | number) => void;
+}
 
-  const handleSelect = (key: keyof typeof selected, value: string) => {
-    setSelected({ ...selected, [key]: value });
-  };
-
+const CatalogFilters: React.FC<CatalogFiltersProps> = ({
+  filters,
+  onFilterChange,
+}) => {
   return (
-    <div className="flex ml-[5%] flex-wrap gap-4 mb-6">
-      {Object.entries(filters).map(([key, options]) => (
-        <DropdownMenu key={key}>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              className="text-sm font-medium bg-gray-100 px-4 py-2 rounded-md hover:bg-gray-200"
-            >
-              {key === "grelhas" ? "Qtd. de Grelhas" : capitalize(key)}{" "}
-              <ChevronUp className="ml-1 w-4 h-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start">
-            {options.map((option) => (
-              <DropdownMenuItem
-                key={option}
-                onClick={() => handleSelect(key as keyof typeof selected, option)}
-              >
-                {option}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ))}
+    <div className="flex flex-wrap gap-4 mb-8 ml-[5%]">
+      {/* Filtro de Categoria */}
+      <div className="flex items-end">
+        <Select
+          value={filters.category ?? "all"}
+          onValueChange={(val) =>
+            onFilterChange("category", val === "all" ? undefined : val)
+          }
+        >
+          <SelectTrigger className="w-48">
+            <SelectValue placeholder="Categoria" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos</SelectItem>
+            <SelectItem value="inox">Inox</SelectItem>
+            <SelectItem value="aço">Aço Galvanizado</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Filtro de Preço Mínimo */}
+      <div className="flex flex-col">
+        <label htmlFor="minPrice" className="text-sm font-medium mb-1">
+          Preço Mínimo
+        </label>
+        <Input
+          id="minPrice"
+          type="number"
+          placeholder="R$ 0,00"
+          value={filters.minPrice ?? ""}
+          onChange={(e) =>
+            onFilterChange(
+              "minPrice",
+              e.target.value ? Number(e.target.value) : undefined
+            )
+          }
+          className="w-32"
+        />
+      </div>
+
+      {/* Filtro de Preço Máximo */}
+      <div className="flex flex-col">
+        <label htmlFor="maxPrice" className="text-sm font-medium mb-1">
+          Preço Máximo
+        </label>
+        <Input
+          id="maxPrice"
+          type="number"
+          placeholder="R$ 0,00"
+          value={filters.maxPrice ?? ""}
+          onChange={(e) =>
+            onFilterChange(
+              "maxPrice",
+              e.target.value ? Number(e.target.value) : undefined
+            )
+          }
+          className="w-32"
+        />
+      </div>
     </div>
   );
-}
+};
 
-function capitalize(str: string) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
-}
+export default CatalogFilters;
