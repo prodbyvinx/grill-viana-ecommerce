@@ -5,7 +5,7 @@ export default function Conditions() {
     <>
       <section>
         <div className="bg-white h-50 flex items-center justify-center gap-36 text-gray-600">
-          <div className="flex items-start gap-2">
+          <div className="flex items-start gap-2 bg-gray-50 p-4 rounded-lg">
             <Truck className="self-center h-12 w-12 mr-2" />
             <div className="flex flex-col">
               <h2 className="font-bold">Frete Grátis</h2>
@@ -13,7 +13,7 @@ export default function Conditions() {
             </div>
           </div>
 
-          <div className="flex items-start gap-2">
+          <div className="flex items-start gap-2 bg-gray-50 p-4 rounded-lg  ">
             <WalletMinimal className="self-center h-12 w-12 mr-2" />
             <div className="flex flex-col">
               <h2 className="font-bold">Até 10x sem juros</h2>

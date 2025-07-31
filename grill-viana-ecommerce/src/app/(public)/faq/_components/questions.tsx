@@ -8,19 +8,6 @@ import {
 export default function Questions() {
   return (
     <>
-      <section className="flex flex-col items-center p-8">
-        <h1 className="text-2xl font-bold">
-          <span className="text-red-800">Dúvidas?</span> A gente te ajuda!
-        </h1>
-        <p className="text-base mt-2">
-          Confira abaixo as respostas para as perguntas mais frequentes sobre
-          nossos produtos prazos e formas de envio.
-        </p>
-        <p className="text-base">
-          Se ainda restar alguma dúvida é só preencher o formulário logo abaixo,
-          teremos o maior prazer em responder seu e-mail!
-        </p>
-      </section>
       <section className="w-90% mx-[5%] flex flex-col items-center gap-8 py-8">
         <div className="bg-gray-100 w-[100%] rounded-lg p-3">
           <Accordion type="single" collapsible className="w-full">

@@ -11,7 +11,7 @@ export default function Header() {
     <header className="w-full bg-gray-50 px-6 py-4">
       <div className="max-w-[93%] mx-auto flex items-center justify-between gap-6">
         {/* 1. Logo + Barra de busca */}
-        <div className="flex items-center gap-6 flex-1 min-w-[200px]">
+        <div className="flex items-center gap-6 flex-1 min-w-[200px] flex-shrink-0">
           <Link href="/">
             <Image
               src="/images/black-logo.png"
@@ -28,20 +28,46 @@ export default function Header() {
         </div>
 
         {/* 2. Navegação central */}
-        <nav className="hidden lg:flex items-center gap-10 flex-shrink-0">
-          <Link href="/catalogo" className="text-md text-gray-700 font-medium">Catálogo</Link>
-          <Link href="/faq" className="text-md text-gray-700 font-medium">FAQ</Link>
-          <Link href="/contato" className="text-md text-gray-700 font-medium">Contato</Link>
-          <Link href="/sobre" className="text-md text-gray-700 font-medium">Sobre a Loja</Link>
+        <nav className="hidden lg:flex items-center gap-10 flex-shrink-0 ">
+          <Link
+            href="/catalogo"
+            className="text-md text-gray-700 hover:text-red-800 transition-all duration-[0.2s] font-medium"
+          >
+            Catálogo
+          </Link>
+          <Link
+            href="/faq"
+            className="text-md text-gray-700 hover:text-red-800 transition-all duration-[0.2s] font-medium"
+          >
+            FAQ
+          </Link>
+          <Link
+            href="/contato"
+            className="text-md text-gray-700 hover:text-red-800 transition-all duration-[0.2s] font-medium"
+          >
+            Contato
+          </Link>
+          <Link
+            href="/sobre"
+            className="text-md text-gray-700 hover:text-red-800 transition-all duration-[0.2s] font-medium"
+          >
+            Sobre a Loja
+          </Link>
         </nav>
 
         {/* 3. Ícones */}
         <div className="flex items-center gap-4">
-          <Button variant="link" className="text-gray-700">
-            <ShoppingCart size={28}/>
+          <Button
+            variant="link"
+            className="text-gray-700 hover:text-red-800 transition-all duration-[0.2s] cursor-pointer"
+          >
+            <ShoppingCart size={24} strokeWidth={1.5} />
           </Button>
-          <Button variant="link" className="text-gray-700">
-            <User size={28}/>
+          <Button
+            variant="link"
+            className="text-gray-700 hover:text-red-800 transition-all duration-[0.2s] cursor-pointer"
+          >
+            <User size={24} strokeWidth={1.5} />
           </Button>
         </div>
       </div>

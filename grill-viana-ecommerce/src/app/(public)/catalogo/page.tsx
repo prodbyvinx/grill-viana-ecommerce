@@ -30,10 +30,10 @@ export default function CatalogPage() {
 
   return (
     <>
-      <section className="bg-white h-[100vh] overflow-auto">
+      <section className="bg-white h-[100vh] overflow-auto ">
         <Header />
         <BackButton />
-        <div className="w-full flex justify-center items-center mb-8">
+        <div className="w-full flex justify-center items-center mb-8 p-8">
           <div className="flex w-[70%] flex-col text-center gap-3">
             <h1 className="text-3xl font-bold">
               Nosso <span className="text-red-800">Catálogo</span>
@@ -57,7 +57,7 @@ export default function CatalogPage() {
           />
 
         </div>
-        <div className="px-[5%] bg-white">
+        <div className="px-[5%] bg-white pb-8">
           <CatalogContent products={filteredProducts}/>
         </div>
       </section>
