@@ -45,18 +45,4 @@ Detalhes na documentação interna de cada integração.
 
 ---
 
-## 📦 Deploy
-
-1. Conecte seu repositório ao Vercel.
-2. Configure as variáveis de ambiente na dashboard do projeto Vercel.
-3. Deploy automático em commits na `main`.
-
----
-
-## 🤝 Contribuições
-
-Pull requests são bem-vindas! Sinta-se à vontade para abrir issues e sugerir melhorias.
-
----
-
 **Grill Viana** © 2025 | Desenvolvido por Vinícius Henrique Beira
