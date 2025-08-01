@@ -1,4 +1,4 @@
-# Grill Viana E-commerce
+# Grill Viana E-commerce (Em Construção)
 
 Repositório oficial do site de e-commerce **Grill Viana**, uma loja especializada em churrasqueiras de baixo e médio custo. Este projeto foi construído com Next.js (App Router), Tailwind CSS, Shadcn UI, TypeScript e integrações com Prisma ORM, MercadoPago e Bling ERP.
 
