@@ -14,6 +14,7 @@ export type Filters = {
   maxPrice?: number;
   type?: string;
   finalidade?: string;
+  grelhas?: number;
 };
 
 interface CatalogFiltersProps {

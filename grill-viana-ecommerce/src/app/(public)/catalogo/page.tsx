@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useState, useMemo, useEffect } from "react";
 import CatalogFilters, { Filters } from "./_components/catalogfilters";
-import ProductCard, { Product } from "@/app/(public)/_components/productcard";
+import { Product } from "@/app/(public)/_components/productcard";
 import Header from "../_components/header";
 import CatalogContent from "./_components/catalogcontent";
 import BackButton from "../_components/backbutton";

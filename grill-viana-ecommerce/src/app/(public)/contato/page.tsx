@@ -32,7 +32,7 @@ export default function Contato() {
             </span>
 
             <h2 className="font-medium text-lg">Telefone</h2>
-            <caption className="font-bold text-xl text-wrap">(19) 1234-5678</caption>
+            <caption className="font-bold text-xl text-wrap">(19) 98150-4116</caption>
           </div>
           <div className="flex flex-col items-center">
             <span className="flex items-center justify-center w-24 h-24 bg-red-800 rounded-full mb-4">

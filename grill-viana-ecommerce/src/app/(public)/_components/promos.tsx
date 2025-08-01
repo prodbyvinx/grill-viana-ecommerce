@@ -54,11 +54,9 @@ export default function Promos() {
             />
           </div>
         </div>
-        <div className="my-8 bg-red-800 rounded-md hover:bg-red-900 transition-colors duration-300 px-4 py-2 text-center">
-          <Link className="cursor-pointer" href="/catalogo">
-            <span className="text-base font-medium text-white">Ver mais produtos</span>
-          </Link>
-        </div>
+        <Link className="my-8 bg-red-800 rounded-md hover:bg-red-900 transition-colors duration-300 px-4 py-2 text-center" href="/catalogo">
+          <span className="text-base font-medium text-white">Ver mais produtos</span>
+        </Link>
       </section>
     </>
   );

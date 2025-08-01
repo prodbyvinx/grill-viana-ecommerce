@@ -21,6 +21,7 @@ export type Product = {
   category?: string;
   type?: string;
   finalidade?: string;
+  grelhas?: number;
 };
 
 export default function ProductCard({ product }: { product: Product }) {
