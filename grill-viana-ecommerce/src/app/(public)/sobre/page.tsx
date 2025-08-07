@@ -27,19 +27,22 @@ export default function Sobre() {
             </span>
           </h1>
         </article>
-        <article className="flex flex-col mx-[5%] mb-8">
+        <article className="flex flex-col gap-4 mx-[5%] mb-8">
           <h1 className="text-2xl font-semibold text-black">
             Somos a <span className="text-red-800 font-bold">Grill Viana!</span>
           </h1>
-          <p className="text-gray-700 font-medium">
-            Na Grill Viana, acreditamos que churrasco é muito mais do que
-            preparar uma refeição, é criar memórias ao redor da brasa.
-          </p>
-          <p className="text-gray-700 font-medium text-wrap">
-            Fundada por apaixonados por momentos simples e inesquecíveis, nossa
-            loja nasceu com o propósito de oferecer churrasqueiras de qualidade,
-            práticas e duráveis para todos os tipos de espaços e estilos.
-          </p>
+          <div>
+            <p className="text-gray-700 font-medium">
+              Na Grill Viana, acreditamos que churrasco é muito mais do que
+              preparar uma refeição, é criar memórias ao redor da brasa.
+            </p>
+            <p className="text-gray-700 font-medium text-wrap">
+              Fundada por apaixonados por momentos simples e inesquecíveis,
+              nossa loja nasceu com o propósito de oferecer churrasqueiras de
+              qualidade, práticas e duráveis para todos os tipos de espaços e
+              estilos.
+            </p>
+          </div>
         </article>
         <article className="flex flex-row items-center gap-8 mx-[5%] mb-8">
           <figure className="mb-8">
@@ -52,17 +55,34 @@ export default function Sobre() {
             />
           </figure>
           <div>
-            <h2 className="text-3xl font-bold text-gray-700 pb-8">Por que escolher a gente?</h2>
+            <h2 className="text-3xl font-bold text-gray-700 pb-8">
+              Por que escolher a gente?
+            </h2>
             <ul className="space-y-4 text-gray-700 text-lg font-semibold">
-              <li className="flex items-center gap-2"><BadgeCheck fill="green" color="white" size={30}/>Qualidade garantida em cada peça</li>
-              <li className="flex items-center gap-2"><BadgeCheck fill="green" color="white" size={30}/>Entrega rápida, segura e rastreável para todo o Brasil</li>
-              <li className="flex items-center gap-2"><BadgeCheck fill="green" color="white" size={30}/>Suporte que fala a sua língua</li>
-              <li className="flex items-center gap-2"><BadgeCheck fill="green" color="white" size={30}/>Compra 100% segura</li>
+              <li className="flex items-center gap-2">
+                <BadgeCheck fill="green" color="white" size={30} />
+                Qualidade garantida em cada peça
+              </li>
+              <li className="flex items-center gap-2">
+                <BadgeCheck fill="green" color="white" size={30} />
+                Entrega rápida, segura e rastreável para todo o Brasil
+              </li>
+              <li className="flex items-center gap-2">
+                <BadgeCheck fill="green" color="white" size={30} />
+                Suporte que fala a sua língua
+              </li>
+              <li className="flex items-center gap-2">
+                <BadgeCheck fill="green" color="white" size={30} />
+                Compra 100% segura
+              </li>
             </ul>
           </div>
         </article>
         <article className="flex flex-col mx-[5%] mb-8">
-          <h2 className="text-2xl font-bold text-black pb-4">Um pouco dos <span className="text-red-800 font-bold">Bastidores</span></h2>
+          <h2 className="text-2xl font-bold text-black pb-4">
+            Um pouco dos{" "}
+            <span className="text-red-800 font-bold">Bastidores</span>
+          </h2>
           <p className="text-gray-700 font-medium pb-2">
             Muito além do clique no carrinho, existe uma equipe inteira cuidando
             de cada detalhe para que a sua churrasqueira chegue perfeita até a
@@ -109,13 +129,26 @@ export default function Sobre() {
           <RatingsCarousel />
         </section>
         <footer className="flex flex-col items-center justify-center gap-4 bg-white p-8 mx-[5%] mb-8">
-          <h1 className="text-3xl font-bold text-black">Vamos <span className="text-red-800 font-bold">conversar?</span></h1>
-          <p className="text-gray-700 font-semibold text-lg">Ficou com alguma dúvida ou quer saber mais?</p>
-          <p className="text-gray-700 font-medium text-base mb-2">Entre em contato com a gente pelo SAC, Whatsapp, E-mail ou nossas redes sociais. Será um prazer falar com você!</p>
-          <Link href="/contato"  className="w-full bg-red-800 rounded-md p-4 text-center hover:bg-red-700 transition-colors duration-200">
+          <h1 className="text-3xl font-bold text-black">
+            Vamos <span className="text-red-800 font-bold">conversar?</span>
+          </h1>
+          <p className="text-gray-700 font-semibold text-lg">
+            Ficou com alguma dúvida ou quer saber mais?
+          </p>
+          <p className="text-gray-700 font-medium text-base mb-2">
+            Entre em contato com a gente pelo SAC, Whatsapp, E-mail ou nossas
+            redes sociais. Será um prazer falar com você!
+          </p>
+          <Link
+            href="/contato"
+            className="w-full bg-red-800 rounded-md p-4 text-center hover:bg-red-700 transition-colors duration-200"
+          >
             <p className="text-white font-bold">Fale com a gente</p>
           </Link>
-          <Link href="/catalogo" className="w-full bg-white border-red-800 border-2 rounded-md p-4 text-center hover:bg-gray-100 transition-colors duration-200">
+          <Link
+            href="/catalogo"
+            className="w-full bg-white border-red-800 border-2 rounded-md p-4 text-center hover:bg-gray-100 transition-colors duration-200"
+          >
             <p className="text-red-800 font-bold">Ver nossos produtos</p>
           </Link>
         </footer>

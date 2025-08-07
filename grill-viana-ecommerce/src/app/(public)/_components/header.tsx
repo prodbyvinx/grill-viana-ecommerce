@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ShoppingCart, User, Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import SearchBar from "./searchbar";
+import { CartProvider, ShoppingCartDropdown } from "./shoppingcart";
+import { AuthProvider, UserProfileDropdown } from "./logindropdown";
+import { User } from "lucide-react";
 
 export default function Header() {
   return (
@@ -57,18 +58,14 @@ export default function Header() {
 
         {/* 3. Ícones */}
         <div className="flex items-center gap-4">
-          <Button
-            variant="link"
-            className="text-gray-700 hover:text-red-800 transition-all duration-[0.2s] cursor-pointer"
-          >
-            <ShoppingCart size={24} strokeWidth={1.5} />
-          </Button>
-          <Button
-            variant="link"
-            className="text-gray-700 hover:text-red-800 transition-all duration-[0.2s] cursor-pointer"
-          >
-            <User size={24} strokeWidth={1.5} />
-          </Button>
+          <CartProvider>
+            <ShoppingCartDropdown />
+          </CartProvider>
+        </div>
+        <div className="flex items-center gap-4">
+          <AuthProvider>
+            <UserProfileDropdown />
+          </AuthProvider>
         </div>
       </div>
     </header>
