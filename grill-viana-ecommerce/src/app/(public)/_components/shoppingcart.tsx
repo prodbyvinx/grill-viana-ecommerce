@@ -79,7 +79,7 @@ export function ShoppingCartDropdown() {
       <PopoverContent className="w-96 bg-white rounded-lg shadow-lg p-4">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-medium">Carrinho ({items.length})</h3>
-          <Button variant="ghost" size="sm" onClick={clearCart}>
+          <Button variant="ghost" size="sm" onClick={clearCart} className="cursor-pointer">
             Limpar
           </Button>
         </div>
@@ -131,7 +131,7 @@ export function ShoppingCartDropdown() {
           Total: R$ {total().toFixed(2)}
         </div>
 
-        <Button className="w-full mt-3 bg-red-800 text-white hover:bg-red-700">
+        <Button className="w-full mt-3 bg-red-800 text-white hover:bg-red-700 cursor-pointer">
           Finalizar compra
         </Button>
       </PopoverContent>

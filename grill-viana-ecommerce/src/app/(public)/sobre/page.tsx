@@ -8,9 +8,9 @@ import Link from "next/link";
 export default function Sobre() {
   return (
     <>
+      <Header />
+      <BackButton />
       <main className="flex flex-col w-full">
-        <Header />
-        <BackButton />
         <article className="flex flex-col items-center justify-center mb-8 bg-white mx-[5%]">
           <div className="flex flex-col items-center justify-center gap-4 p-4">
             <Image

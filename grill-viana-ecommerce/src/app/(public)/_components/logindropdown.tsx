@@ -58,13 +58,13 @@ export function UserProfileDropdown() {
             <>
               <Link
                 href="/login"
-                className="w-full flex items-center justify-center h-8 text-base font-medium bg-red-800 text-white hover:bg-red-700 py-2 rounded-md mb-2 cursor-pointer"
+                className="w-full flex items-center justify-center h-8 text-base font-medium bg-red-800 text-white hover:bg-red-700 py-2 rounded-md mb-2 cursor-pointer transition-colors duration-200"
               >
                 Iniciar sessão
               </Link>
               <Link
                 href="/register"
-                className="w-full flex items-center justify-center h-8 text-base font-medium  bg-white text-red-800 border-red-800 border-2 hover:bg-red-800 hover:text-white rounded-md cursor-pointer"
+                className="w-full flex items-center justify-center h-8 text-base font-medium  bg-white text-red-800 border-red-800 border-2 hover:bg-red-800 hover:text-white rounded-md cursor-pointer transition-colors duration-200"
               >
                 Criar conta
               </Link>

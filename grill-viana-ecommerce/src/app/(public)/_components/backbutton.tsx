@@ -9,7 +9,7 @@ export default function BackButton() {
   return (
     <button
       onClick={() => router.back()}
-      className="flex ml-[5%] my-8 items-center gap-1 text-gray-500 hover:text-red-800 transition-all duration-[0.2s] font-medium text-base cursor-pointer"
+      className="absolute flex ml-[5%] pt-8 items-center gap-1 text-gray-500 hover:text-red-800 transition-all duration-[0.2s] font-medium text-base cursor-pointer"
     >
       <ChevronLeft size={24}/>
       Voltar
