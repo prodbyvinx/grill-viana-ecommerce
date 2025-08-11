@@ -21,6 +21,7 @@ async function main() {
         description: p.description,
         price: p.price,
         type: p.type,
+        sku: p.sku,
         finalidade: p.finalidade,
         grelhas: p.grelhas,
         stock: 0,

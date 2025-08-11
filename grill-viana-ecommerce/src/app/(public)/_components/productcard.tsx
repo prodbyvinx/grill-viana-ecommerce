@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/card";
 import Image from "next/image";
 import { Star, Eye } from "lucide-react";
+import { BuyButton } from "./buybutton";
 
 export type Product = {
   id: number;
@@ -75,6 +76,7 @@ export default function ProductCard({ product }: { product: Product }) {
           <span className="text-2xl font-bold text-black">
             R$ {product.price.toFixed(2)}
           </span>
+          <BuyButton skuCode={product.id.toString()} />
         </div>
       </CardContent>
     </Card>
