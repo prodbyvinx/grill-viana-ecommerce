@@ -6,7 +6,7 @@
     "image": "/images/fixa.png",
     "description": "Alta durabilidade com acabamento em aço inox.",
     "category": "inox",
-    "type": "fechada",
+    "material": "fechada",
     "finalidade": "casual",
     "grelhas": 1,
     "sku": "G-60"
@@ -18,7 +18,7 @@
     "image": "/images/camping.png",
     "description": "Ideal para espaços pequenos sem abrir mão do sabor.",
     "category": "aço",
-    "type": "aberta",
+    "material": "aberta",
     "finalidade": "casual",
     "grelhas": 1,
     "sku": "G-50"
@@ -30,7 +30,7 @@
     "image": "/images/espeteira.png",
     "description": "Modelo para churrasqueiros exigentes e profissionais.",
     "category": "inox",
-    "type": "aberta",
+    "material": "aberta",
     "finalidade": "profissional",
     "grelhas": 2,
     "sku": "I-60"
@@ -42,7 +42,7 @@
     "image": "/images/i60_capa.png",
     "description": "Portátil em inox, acompanha grelha tipo moeda, ideal para família.",
     "category": "inox",
-    "type": "fechada",
+    "material": "fechada",
     "finalidade": "casual",
     "grelhas": 1,
     "sku": "I-50"
@@ -54,7 +54,7 @@
     "image": "/images/galvanizada_g60.png",
     "description": "Grande, portátil, em aço galvanizado 60×75 cm — bestseller da Grill Viana.",
     "category": "aço",
-    "type": "fechada",
+    "material": "fechada",
     "finalidade": "casual",
     "grelhas": 1,
     "sku": "CI-40"
@@ -66,7 +66,7 @@
     "image": "/images/mini_bancada_inox.jpg",
     "description": "Modelo compacto em inox, ideal para balcões e pequenos espaços.",
     "category": "inox",
-    "type": "aberta",
+    "material": "aberta",
     "finalidade": "camping",
     "grelhas": 1,
     "sku": "CI-50"
@@ -78,7 +78,7 @@
     "image": "/images/fixa_grande.jpg",
     "description": "Pé fixo, inox completo, 60cm de largura – robusta e resistente.",
     "category": "inox",
-    "type": "fechada",
+    "material": "fechada",
     "finalidade": "casual",
     "grelhas": 2,
     "sku": "GM-60"
@@ -90,7 +90,7 @@
     "image": "/images/inox_duas_grelhas.png",
     "description": "Leve, duas grelhas tipo moeda – muito bem avaliada no Mercado Livre.",
     "category": "inox",
-    "type": "aberta",
+    "material": "aberta",
     "finalidade": "casual",
     "grelhas": 2,
     "sku": "I-100"

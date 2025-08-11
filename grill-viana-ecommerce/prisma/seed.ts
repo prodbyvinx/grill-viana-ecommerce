@@ -1,5 +1,6 @@
 // prisma/seed.ts
-const { PrismaClient } = require("@prisma/client");
+import { PrismaClient } from  "@prisma/client";
+
 const products = require("./seed-data.json");
 
 const prismaClient = new PrismaClient();
