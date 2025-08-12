@@ -1,75 +1,91 @@
-// src/app/api/checkout/mercadopago/route.ts
-export const runtime = "nodejs";
-
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { MercadoPagoConfig, Preference } from "mercadopago";
-import crypto from "node:crypto";
+import { z } from "zod";
 
-type Payload = { slug: string; quantity?: number };
+const mp = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN! });
+
+const pref = await new Preference(mp).create({
+  body: {
+    items: [
+      {
+        id: String(product.id),
+        title: product.name,
+        quantity, // number inteiro
+        unit_price: Number(unitPrice), // em reais
+        currency_id: "BRL",
+      },
+    ],
+    back_urls: {
+      success: `${process.env.NEXT_PUBLIC_SITE_URL}/pedido/sucesso`,
+      failure: `${process.env.NEXT_PUBLIC_SITE_URL}/pedido/erro`,
+      pending: `${process.env.NEXT_PUBLIC_SITE_URL}/pedido/pendente`,
+    },
+    auto_return: "approved",
+    external_reference: `gv-${product.id}`,
+    metadata: { productId: product.id, slug: product.slug },
+    // notification_url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/webhooks/mercadopago`,
+  },
+  // requestOptions: { idempotencyKey: crypto.randomUUID() }, // opcional
+});
+
+const BodySchema = z.object({
+  productId: z.number().int().positive().optional(),
+  slug: z.string().min(1).optional(),
+  quantity: z.number().int().positive().default(1),
+});
 
 export async function POST(req: Request) {
   try {
-    const { slug, quantity = 1 } = (await req.json()) as Payload;
-
-    if (!slug || typeof slug !== "string") {
-      return NextResponse.json({ error: "slug obrigatório" }, { status: 400 });
+    const parsed = BodySchema.safeParse(await req.json());
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Informe slug ou productId" }, { status: 400 });
     }
 
-    const product = await prisma.product.findUnique({ where: { slug } });
+    const { productId, slug, quantity } = parsed.data;
+
+    if (!productId && !slug) {
+      return NextResponse.json({ error: "Informe slug ou productId" }, { status: 400 });
+    }
+
+    // Busca pelo que tiver disponível
+    const product = productId
+      ? await prisma.product.findUnique({ where: { id: productId } })
+      : await prisma.product.findUnique({ where: { slug: slug! } });
+
     if (!product) {
       return NextResponse.json({ error: "Produto não encontrado" }, { status: 404 });
     }
 
-    if (!process.env.MP_ACCESS_TOKEN) {
-      return NextResponse.json({ error: "MP_ACCESS_TOKEN não configurado" }, { status: 500 });
-    }
+    // Se seu schema usa priceCents (inteiro), converta para reais
+    const unitPrice = (product as any).priceCents
+      ? (product as any).priceCents / 100
+      : (product as any).price; // fallback se ainda tiver `price` legado
 
-    const qty = Number.isFinite(quantity) && quantity > 0 ? Math.floor(quantity) : 1;
-
-    const client = new MercadoPagoConfig({
-      accessToken: process.env.MP_ACCESS_TOKEN!,
-      options: { idempotencyKey: crypto.randomUUID() },
-    });
-
-    const body: any = {
+    const mp = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN! });
+    const pref = await new Preference(mp).create({
       items: [
         {
-          id: product.id,
+          id: String(product.id),
           title: product.name,
-          quantity: qty,
+          quantity,
+          unit_price: Number(unitPrice),
           currency_id: "BRL",
-          unit_price: product.priceCents / 100,
         },
       ],
       back_urls: {
-        success: `${process.env.APP_URL}/checkout/sucesso`,
-        failure: `${process.env.APP_URL}/checkout/erro`,
-        pending: `${process.env.APP_URL}/checkout/pendente`,
+        success: `${process.env.NEXT_PUBLIC_SITE_URL}/pedido/sucesso`,
+        failure: `${process.env.NEXT_PUBLIC_SITE_URL}/pedido/erro`,
+        pending: `${process.env.NEXT_PUBLIC_SITE_URL}/pedido/pendente`,
       },
       auto_return: "approved",
-    };
+      external_reference: `gv-${product.id}`,
+      metadata: { productId: product.id, slug: product.slug },
+    });
 
-    // Evita notification_url em localhost
-    if (process.env.APP_URL?.startsWith("https://")) {
-      body.notification_url = `${process.env.APP_URL}/api/webhooks/mercadopago`;
-    }
-
-    const pref = await new Preference(client).create({ body });
-    const url = pref.init_point ?? (pref as any).sandbox_init_point;
-    if (!url) {
-      return NextResponse.json(
-        { error: "Preference criada sem URL de pagamento" },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({ id: pref.id, init_point: url });
-  } catch (e: any) {
-    console.error("MP Preference Error:", e?.message, e?.cause ?? e);
-    return NextResponse.json(
-      { error: e?.message ?? "Erro ao criar preferência" },
-      { status: 500 }
-    );
+    return NextResponse.json({ id: pref.id, init_point: pref.init_point }, { status: 201 });
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json({ error: "Falha ao criar checkout" }, { status: 500 });
   }
 }

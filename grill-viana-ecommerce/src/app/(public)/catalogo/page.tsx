@@ -33,7 +33,7 @@ export default function CatalogPage() {
     <>
       <Header />
       <BackButton />
-      <section className="bg-white overflow-auto ">
+      <section className="bg-whiteoverflow-auto ">
         <div className="w-full flex justify-center items-center mb-8 p-8">
           <div className="flex w-[70%] flex-col text-center gap-3">
             <h1 className="text-3xl font-bold">

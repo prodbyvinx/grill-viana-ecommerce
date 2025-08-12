@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Image from "next/image";
 import { getProductBySlug, getTopProductSlugs } from "@/lib/db/product";
 import { formatBRL } from "@/lib/money";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Truck, ShieldCheck, CreditCard } from "lucide-react";
 import ProductGallery from "../_components/productgallery";
-import BuyActions from "../_components/buyactions";
+import BuyButton from "@/app/(public)/_components/buybutton";
 
 export const revalidate = 60; // ISR: revalida a cada 60s
 
@@ -94,7 +92,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
           )}
         </div>
 
-        <BuyActions slug={product.slug} priceCents={product.priceCents} disabled={product.stock <= 0} />
+        <BuyButton productId={product.id as unknown as number} />
 
         <Separator />
 

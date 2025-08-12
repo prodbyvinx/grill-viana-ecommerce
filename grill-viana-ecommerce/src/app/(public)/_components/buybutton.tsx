@@ -1,8 +1,15 @@
 "use client";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Loader2 } from 'lucide-react';
 
-export function BuyButton({ skuCode }: { skuCode: string }) {
+export default function BuyButton({
+  productId,
+  quantity = 1,
+}: {
+  productId: number; // ajuste se seu id for string
+  quantity?: number;
+}) {
   const [loading, setLoading] = useState(false);
 
   async function handleBuy() {
@@ -11,39 +18,24 @@ export function BuyButton({ skuCode }: { skuCode: string }) {
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ skuCode, quantity: 1 }),
+        body: JSON.stringify({ productId, quantity }),
       });
 
-      const isJson = res.headers
-        .get("content-type")
-        ?.includes("application/json");
-      const data = isJson ? await res.json() : { error: await res.text() };
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || "Erro ao criar pagamento");
 
-      if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
-      if (!data.init_point) throw new Error("Resposta sem init_point");
-
+      // Redireciona para o Mercado Pago
       window.location.href = data.init_point;
-    } catch (err: any) {
-      alert(err.message);
+    } catch (e: any) {
+      alert(e.message ?? "Falha ao iniciar compra");
     } finally {
       setLoading(false);
     }
   }
-  if (!skuCode) {
-    return (
-      <Button disabled className="w-auto bg-gray-400 cursor-not-allowed">
-        Comprar
-      </Button>
-    );
-  }
 
   return (
-    <Button
-      onClick={handleBuy}
-      disabled={loading}
-      className="w-auto bg-red-800 hover:bg-red-700 cursor-pointer"
-    >
-      {loading ? "Aguarde..." : "Comprar"}
+    <Button onClick={handleBuy} disabled={loading} className="bg-red-800 hover:bg-red-700 text-white cursor-pointer min-w-24">
+      {loading ? <Loader2 className="animate-spin cursor-progress" /> : "Comprar"}
     </Button>
   );
 }
