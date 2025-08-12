@@ -21,7 +21,8 @@ export default function CatalogPage() {
     return products.filter((p) => {
       if (filters.category && p.category !== filters.category) return false;
       if (filters.type && p.type !== filters.type) return false;
-      if (filters.finalidade && p.finalidade !== filters.finalidade) return false;
+      if (filters.finalidade && p.finalidade !== filters.finalidade)
+        return false;
       if (filters.minPrice != null && p.price < filters.minPrice) return false;
       if (filters.maxPrice != null && p.price > filters.maxPrice) return false;
       return true;
@@ -30,9 +31,9 @@ export default function CatalogPage() {
 
   return (
     <>
-      <section className="bg-white h-[100vh] overflow-auto ">
-        <Header />
-        <BackButton />
+      <Header />
+      <BackButton />
+      <section className="bg-white overflow-auto ">
         <div className="w-full flex justify-center items-center mb-8 p-8">
           <div className="flex w-[70%] flex-col text-center gap-3">
             <h1 className="text-3xl font-bold">
@@ -55,10 +56,9 @@ export default function CatalogPage() {
               setFilters((prev) => ({ ...prev, [field]: value as any }))
             }
           />
-
         </div>
         <div className="px-[5%] bg-white pb-8">
-          <CatalogContent products={filteredProducts}/>
+          <CatalogContent products={filteredProducts} />
         </div>
       </section>
     </>
