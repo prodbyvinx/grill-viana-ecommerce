@@ -46,7 +46,7 @@
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^20",
+    "@types/node": "^20.19.10",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
@@ -54,8 +54,10 @@
     "prisma": "^6.14.0",
     "tailwindcss": "^4",
     "ts-node": "latest",
-    "tsx": "^4.20.3",
+    "tsx": "^4.20.4",
     "tw-animate-css": "^1.3.4",
     "typescript": "latest"
-  }
+  },
+  "prisma": { "seed": "tsx prisma/seed.ts" }
+
 }

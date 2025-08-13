@@ -7,7 +7,8 @@ export default function BuyButton({
   productId,
   quantity = 1,
 }: {
-  productId: number; // ajuste se seu id for string
+  productId: number;
+  disabled: boolean;
   quantity?: number;
 }) {
   const [loading, setLoading] = useState(false);

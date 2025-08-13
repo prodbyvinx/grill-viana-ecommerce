@@ -8,10 +8,12 @@ import {
 import Image from "next/image";
 import { Star, Eye } from "lucide-react";
 import BuyButton from "./buybutton";
+import Link from 'next/link'
 
 export type Product = {
   id: number;
   name: string;
+  sku: string;
   description: string;
   image: string;
   price: number;
@@ -23,15 +25,17 @@ export type Product = {
   type?: string;
   finalidade?: string;
   grelhas?: number;
+  stockTotal: number;
 };
 
 export default function ProductCard({ product }: { product: Product }) {
   return (
-    <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
-      <div className="aspect-[4/3] relative overflow-hidden flex justify-center">
-        <Image
-          src={product.image}
-          width={300}
+    <Link href={`/produto/${product.id}`}>
+      <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden cursor-pointer">
+        <div className="aspect-[4/3] relative overflow-hidden flex justify-center">
+          <Image
+            src={product.image}
+            width={300}
           height={300}
           alt={product.name}
           className="object-contain"
@@ -76,9 +80,10 @@ export default function ProductCard({ product }: { product: Product }) {
           <span className="text-2xl font-bold text-black">
             R$ {product.price.toFixed(2)}
           </span>
-          <BuyButton productId={product.id as unknown as number} />
+          <BuyButton productId={product.id as unknown as number} disabled={product.stockTotal === 0} />
         </div>
       </CardContent>
     </Card>
+  </Link>
   );
 }

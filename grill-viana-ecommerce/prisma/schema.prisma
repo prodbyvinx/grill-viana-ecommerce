@@ -8,7 +8,6 @@ datasource db {
 }
 
 // -------- Enums --------
-
 enum UserRole {
   ADMIN
   CUSTOMER
@@ -83,9 +82,8 @@ enum DocumentType {
 }
 
 // -------- Core Auth --------
-
 model User {
-  id           String   @id @default(cuid())
+  id           Int      @id @default(autoincrement())
   name         String?
   email        String   @unique
   passwordHash String
@@ -100,65 +98,67 @@ model User {
 }
 
 // -------- Catalog --------
-
 model Category {
-  id        String     @id @default(cuid())
-  slug      String     @unique
-  name      String     @unique
-  parentId  String?
-  parent    Category?  @relation("CategoryToParent", fields: [parentId], references: [id])
-  children  Category[] @relation("CategoryToParent")
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  slug      String   @unique
   products  Product[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Product {
-  id          String   @id @default(cuid())
-  slug        String   @unique
-  skuRoot     String?
+  id          Int     @id @default(autoincrement())
   name        String
-  shortName   String?
-  description String?
-  material    Material
-  ncm         String? // Ex.: 73218900 (padrão para várias churrasqueiras)
-  weightGrams Int?
-  widthMm     Int?
-  heightMm    Int?
-  depthMm     Int?
-  attributes  Json?
-  isActive    Boolean  @default(true)
+  slug        String? @unique
+  sku         String? @unique
+  ncm         String?
+  description String
+  priceCents  Int
+  stockTotal  Int     @default(0)
+  widthCm     Int?
+  heightCm    Int?
+  depthCm     Int?
+  material    String?
+  isActive    Boolean @default(true)
 
-  // Preço atual (espelho) para performance – histórico em Price
-  priceCents Int
+  // relação com Category (opcional)
+  categoryId Int?
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
 
-  // Estoque agregado (espelho) – movimentos em InventoryMovement e por variação em ProductVariant
-  stockTotal Int @default(0)
-
-  // Relations
-  categoryId String?
-  category   Category?           @relation(fields: [categoryId], references: [id])
   images     ProductImage[]
   variants   ProductVariant[]
   prices     Price[]
-  orderItems OrderItem[]
   inventory  InventoryMovement[]
+  orderItems OrderItem[]
+  cartItems  CartItem[]
 
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  CartItem  CartItem[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  @@index([material])
+  @@index([isActive])
+}
+
+model ProductImage {
+  id       Int     @id @default(autoincrement())
+  url      String
+  alt      String?
+  position Int     @default(0)
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId, position])
 }
 
 model ProductVariant {
   id          String   @id @default(cuid())
-  productId   String
+  productId   Int
   product     Product  @relation(fields: [productId], references: [id])
   sku         String   @unique
-  name        String? // ex.: "50x40", "60cm"
+  name        String?
   priceCents  Int
-  stock       Int      @default(0)
+  stockTotal  Int      @default(0)
   weightGrams Int?
   widthMm     Int?
   heightMm    Int?
@@ -176,24 +176,9 @@ model ProductVariant {
   @@index([productId])
 }
 
-model ProductImage {
-  id        String   @id @default(cuid())
-  productId String
-  product   Product  @relation(fields: [productId], references: [id])
-  url       String
-  alt       String?
-  width     Int?
-  height    Int?
-  position  Int      @default(0)
-  isPrimary Boolean  @default(false)
-  createdAt DateTime @default(now())
-
-  @@index([productId, position])
-}
-
 model Price {
   id          String          @id @default(cuid())
-  productId   String
+  productId   Int
   product     Product         @relation(fields: [productId], references: [id])
   variantId   String?
   variant     ProductVariant? @relation(fields: [variantId], references: [id])
@@ -208,7 +193,7 @@ model Price {
 
 model InventoryMovement {
   id        String                @id @default(cuid())
-  productId String?
+  productId Int?
   variantId String?
   product   Product?              @relation(fields: [productId], references: [id])
   variant   ProductVariant?       @relation(fields: [variantId], references: [id])
@@ -223,49 +208,50 @@ model InventoryMovement {
 }
 
 // -------- Cart / Checkout --------
-
 model Cart {
   id                   String     @id @default(cuid())
-  userId               String?
+  userId               Int?
   user                 User?      @relation(fields: [userId], references: [id])
   status               CartStatus @default(ACTIVE)
   items                CartItem[]
-  checkoutPreferenceId String? // Mercado Pago preference id
+  checkoutPreferenceId String?
   createdAt            DateTime   @default(now())
   updatedAt            DateTime   @updatedAt
 }
 
 model CartItem {
-  id        String          @id @default(cuid())
-  cartId    String
-  cart      Cart            @relation(fields: [cartId], references: [id])
-  productId String
-  product   Product         @relation(fields: [productId], references: [id])
+  id     String @id @default(cuid())
+  cartId String
+  cart   Cart   @relation(fields: [cartId], references: [id])
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+
   variantId String?
   variant   ProductVariant? @relation(fields: [variantId], references: [id])
+
   quantity  Int
-  unitCents Int // capturado quando adiciona ao carrinho (para UI)
-  createdAt DateTime        @default(now())
+  unitCents Int
+  createdAt DateTime @default(now())
 
   @@unique([cartId, productId, variantId])
 }
 
 // -------- Orders / Payments / Shipping --------
-
 model Order {
   id          String @id @default(cuid())
   orderNumber Int    @unique @default(autoincrement())
 
   // Vínculo com usuário (opcional – permite guest checkout)
-  userId String?
-  user   User?   @relation(fields: [userId], references: [id])
+  userId Int?
+  user   User? @relation(fields: [userId], references: [id])
 
   // Snapshot de cliente para NF/contato
   customerName  String?
   customerEmail String?
   customerPhone String?
   documentType  DocumentType?
-  document      String? // CPF/CNPJ (somente números)
+  document      String?
 
   // Endereços (rel. nominado)
   shippingAddressId String?
@@ -304,15 +290,17 @@ model Order {
 }
 
 model OrderItem {
-  id        String          @id @default(cuid())
-  orderId   String
-  order     Order           @relation(fields: [orderId], references: [id])
-  productId String?
-  product   Product?        @relation(fields: [productId], references: [id])
+  id      String @id @default(cuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id])
+
+  productId Int?
+  product   Product? @relation(fields: [productId], references: [id])
+
   variantId String?
   variant   ProductVariant? @relation(fields: [variantId], references: [id])
 
-  // Snapshot dos dados na compra
+  // Snapshot
   sku        String?
   name       String
   quantity   Int
@@ -355,7 +343,7 @@ model Shipping {
 
 model Address {
   id           String      @id @default(cuid())
-  userId       String?
+  userId       Int?
   user         User?       @relation(fields: [userId], references: [id])
   type         AddressType
   name         String?
@@ -376,7 +364,6 @@ model Address {
 }
 
 // -------- ERP / Webhooks --------
-
 model BlingSync {
   id           String    @id @default(cuid())
   orderId      String    @unique
@@ -404,12 +391,11 @@ model WebhookEvent {
 }
 
 // -------- Marketing --------
-
 model Coupon {
   id         String     @id @default(cuid())
   code       String     @unique
   type       CouponType
-  value      Int // Percent [0..100] para PERCENT; centavos para FIXED
+  value      Int
   startsAt   DateTime?
   endsAt     DateTime?
   usageLimit Int?
