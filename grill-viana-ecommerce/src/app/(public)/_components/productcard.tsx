@@ -31,7 +31,7 @@ export type Product = {
 export default function ProductCard({ product }: { product: Product }) {
   return (
     <Link href={`/produto/${product.id}`}>
-      <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden cursor-pointer">
+      <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 max-h-120 overflow-hidden cursor-pointer">
         <div className="aspect-[4/3] relative overflow-hidden flex justify-center">
           <Image
             src={product.image}
@@ -40,7 +40,7 @@ export default function ProductCard({ product }: { product: Product }) {
           alt={product.name}
           className="object-contain"
         />
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-black/30 transition-opacity flex justify-center items-center text-white">
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-black/30 transition-opacity h-full flex justify-center items-center text-white">
           <span className="flex flex-col h-full w-auto justify-center items-center text-sm">
             <Eye />
             <p>Clique para ver detalhes</p>
