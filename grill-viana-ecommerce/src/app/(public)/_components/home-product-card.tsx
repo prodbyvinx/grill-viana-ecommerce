@@ -18,7 +18,7 @@ export default function HomeProductCard(props: {
   return (
     <Card className="rounded-2xl hover:shadow-md transition min-w-0">
       <CardHeader className="p-0">
-        <Link href={`/produto/${product.id}`} className="block">
+        <Link href={`/produto/${product.id}`} className="block -z-10">
           <div className="relative aspect-[4/3] w-full overflow-hidden rounded-t-2xl">
             {product.imageUrl ? (
               <Image src={product.imageUrl} alt={product.name} fill className="object-cover" unoptimized/>

@@ -21,7 +21,7 @@ export default function Sobre() {
             />
           </div>
           <h1 className="text-center text-2xl font-semibold text-gray-700">
-            Muito mais que churrasqueiras <br />{" "}
+            Muito mais que churrasqueiras, <br />{" "}
             <span className="text-red-800 font-bold">
               construímos momentos.
             </span>
