@@ -24,10 +24,8 @@ enum AddressType {
 }
 
 enum OrderStatus {
-  DRAFT
   PENDING
   PAID
-  PARTIALLY_REFUNDED
   REFUNDED
   CANCELED
 }
@@ -100,11 +98,11 @@ model User {
 // -------- Catalog --------
 model Category {
   id        Int      @id @default(autoincrement())
-  name      String   @unique
-  slug      String   @unique
-  products  Product[]
+  name      String
+  slug      String   @default("sem-slug")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  products  Product[]
 }
 
 model Product {
@@ -260,7 +258,7 @@ model Order {
   billingAddress    Address? @relation("OrderBillingAddress", fields: [billingAddressId], references: [id])
 
   // Totais
-  status        OrderStatus   @default(PENDING)
+  status        String   @default("pending")
   paymentStatus PaymentStatus @default(PENDING)
   subtotalCents Int           @default(0)
   discountCents Int           @default(0)
@@ -269,15 +267,16 @@ model Order {
 
   // Pagamento/Marketplace
   provider       PaymentProvider?
+  externalRef    String    @unique @default("")
   mpPaymentId    String?          @unique
   mpPreferenceId String?
+  mpInitPoint    String?
 
   // Bling / ERP
   blingOrderNumber String? @unique
 
   // Relations
   items    OrderItem[]
-  payments Payment[]
   shipping Shipping?
 
   metadata          Json?
@@ -285,6 +284,11 @@ model Order {
   updatedAt         DateTime            @updatedAt
   InventoryMovement InventoryMovement[]
   BlingSync         BlingSync?
+
+  // Idempotência de webhook
+  lastPaymentId String?  // guarda o último paymentId processado
+  payments      Payment[]     // relation de pagamentos
+  paymentId     Int?
 
   @@index([status, createdAt])
 }

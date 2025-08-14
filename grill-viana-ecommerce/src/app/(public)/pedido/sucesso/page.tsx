@@ -1,0 +1,13 @@
+import { prisma } from "@/lib/prisma";
+
+export default async function SuccessPage({ searchParams }: { searchParams: { ref?: string } }) {
+  const ref = searchParams?.ref;
+  const order = ref ? await prisma.order.findFirst({ where: { externalRef: ref } }) : null;
+  return (
+    <div className="max-w-xl mx-auto py-16">
+      <h1 className="text-2xl font-semibold">Pagamento aprovado!</h1>
+      <p className="mt-4">Pedido: <b>{order?.id}</b> — Status: <b>{order?.status}</b></p>
+      <p className="mt-2 text-sm text-muted-foreground">Você receberá um e-mail com os detalhes.</p>
+    </div>
+  );
+}

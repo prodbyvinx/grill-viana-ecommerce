@@ -62,6 +62,7 @@ export default async function ProductPage({ params }: { params: { id: string } }
         <BuyButton
           productId={product.id}            // usa o ID numérico
           disabled={product.stockTotal <= 0}
+          unitPriceCents={product.priceCents}
         />
 
         <Separator />
