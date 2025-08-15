@@ -9,6 +9,7 @@ import Image from "next/image";
 import { Star, Eye } from "lucide-react";
 import BuyButton from "./buybutton";
 import Link from 'next/link'
+import { formatBRL } from "@/lib/money";
 
 export type Product = {
   id: number;
@@ -29,6 +30,9 @@ export type Product = {
 };
 
 export default function ProductCard({ product }: { product: Product }) {
+
+  const price = formatBRL(product.price);
+
   return (
     <Link href={`/produto/${product.id}`}>
       <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 max-h-120 overflow-hidden cursor-pointer">
@@ -80,7 +84,11 @@ export default function ProductCard({ product }: { product: Product }) {
           <span className="text-2xl font-bold text-black">
             R$ {product.price.toFixed(2)}
           </span>
-          <BuyButton productId={product.id as unknown as number} disabled={product.stockTotal === 0} />
+          <BuyButton
+                    productId={product.id}            // usa o ID numérico
+                    disabled={product.stockTotal <= 0}
+                    unitPriceCents={product.price * 100}
+                  />
         </div>
       </CardContent>
     </Card>

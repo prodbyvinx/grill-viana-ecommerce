@@ -18,9 +18,11 @@ async function getProductByIdParam(idParam: string) {
   });
 }
 
-export async function generateMetadata(
-  { params }: { params: { id: string } }
-): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: { id: string };
+}): Promise<Metadata> {
   const product = await getProductByIdParam(params.id);
   if (!product) return { title: "Produto não encontrado | Grill Viana" };
 
@@ -34,7 +36,11 @@ export async function generateMetadata(
   };
 }
 
-export default async function ProductPage({ params }: { params: { id: string } }) {
+export default async function ProductPage({
+  params,
+}: {
+  params: { id: string };
+}) {
   const product = await getProductByIdParam(params.id);
 
   if (!product || !product.isActive) {
@@ -46,21 +52,22 @@ export default async function ProductPage({ params }: { params: { id: string } }
 
   return (
     <main className="container mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
-
       <section className="space-y-4">
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <Badge variant="default">
               {product.stockTotal > 0 ? "Em estoque" : "Sob encomenda"}
             </Badge>
-            {product.material && <Badge variant="outline">{product.material}</Badge>}
+            {product.material && (
+              <Badge variant="outline">{product.material}</Badge>
+            )}
           </div>
           <h1 className="text-2xl md:text-3xl font-semibold">{product.name}</h1>
           <p className="text-3xl md:text-4xl font-bold">{price}</p>
         </div>
 
         <BuyButton
-          productId={product.id}            // usa o ID numérico
+          productId={product.id} // usa o ID numérico
           disabled={product.stockTotal <= 0}
           unitPriceCents={product.priceCents}
         />
@@ -84,5 +91,5 @@ export async function generateStaticParams() {
     orderBy: { createdAt: "desc" },
   });
   // rota recebe string; converta
-  return items.map(p => ({ id: String(p.id) }));
+  return items.map((p) => ({ id: String(p.id) }));
 }
