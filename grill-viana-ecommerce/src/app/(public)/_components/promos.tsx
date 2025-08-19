@@ -1,7 +1,11 @@
 import Link from "next/link";
-import HomeProductsGrid from "./home-products-grid";
+import PromoCards from "./promo-cards";
+import { getRandomActiveProducts } from "@/data/products";
 
-export default function Promos() {
+export default async function Promos() {
+
+  const randomProducts = await getRandomActiveProducts(4);
+
   return (
     <>
       <section className="bg-white h-auto w-full flex flex-col justify-center items-center">
@@ -10,7 +14,7 @@ export default function Promos() {
         </h2>
         <div className="mt-8 gap-20 flex items-center">
           <div className="w-70 cursor-pointer">
-            <HomeProductsGrid />
+            <PromoCards products={randomProducts} />
           </div>
         </div>
         <Link

@@ -1,0 +1,122 @@
+[
+  {
+    "name": "Churrasqueira Premium",
+    "slug": "churrasqueira-premium",
+    "sku": "G-60",
+    "description": "Alta durabilidade com acabamento em aço inox.",
+    "priceCents": 79990,
+    "material": "fechada",
+    "isActive": true,
+    "category": { "connect": { "id": 1 } },
+    "images": {
+      "create": [
+        { "url": "/images/fixa.png", "position": 0 }
+      ]
+    }
+  },
+  {
+    "name": "Churrasqueira Compacta",
+    "slug": "churrasqueira-compacta",
+    "sku": "G-50",
+    "description": "Ideal para espaços pequenos sem abrir mão do sabor.",
+    "priceCents": 45990,
+    "material": "aberta",
+    "isActive": true,
+    "category": { "connect": { "id": 2 } },
+    "images": {
+      "create": [
+        { "url": "/images/camping.png", "position": 0 }
+      ]
+    }
+  },
+  {
+    "name": "Churrasqueira Profissional",
+    "slug": "churrasqueira-profissional",
+    "sku": "I-60",
+    "description": "Modelo para churrasqueiros exigentes e profissionais.",
+    "priceCents": 99990,
+    "material": "aberta",
+    "isActive": true,
+    "category": { "connect": { "id": 1 } },
+    "images": {
+      "create": [
+        { "url": "/images/espeteira.png", "position": 0 }
+      ]
+    }
+  },
+  {
+    "name": "Churrasqueira Inox Portátil Família I‑60",
+    "slug": "churrasqueira-inox-portatil-familia-i-60",
+    "sku": "I-50",
+    "description": "Portátil em inox, acompanha grelha tipo moeda, ideal para família.",
+    "priceCents": 42990,
+    "material": "fechada",
+    "isActive": true,
+    "category": { "connect": { "id": 1 } },
+    "images": {
+      "create": [
+        { "url": "/images/i60_capa.png", "position": 0 }
+      ]
+    }
+  },
+  {
+    "name": "Churrasqueira Portátil Em Aço Galvanizado G‑60",
+    "slug": "churrasqueira-portatil-aco-galvanizado-g-60",
+    "sku": "CI-40",
+    "description": "Grande, portátil, em aço galvanizado 60×75 cm — bestseller da Grill Viana.",
+    "priceCents": 34990,
+    "material": "fechada",
+    "isActive": true,
+    "category": { "connect": { "id": 2 } },
+    "images": {
+      "create": [
+        { "url": "/images/galvanizada_g60.png", "position": 0 }
+      ]
+    }
+  },
+  {
+    "name": "Churrasqueira Inox Mini Bancada Móvel",
+    "slug": "churrasqueira-inox-mini-bancada-movel",
+    "sku": "CI-50",
+    "description": "Modelo compacto em inox, ideal para balcões e pequenos espaços.",
+    "priceCents": 40990,
+    "material": "aberta",
+    "isActive": true,
+    "category": { "connect": { "id": 1 } },
+    "images": {
+      "create": [
+        { "url": "/images/mini_bancada_inox.jpg", "position": 0 }
+      ]
+    }
+  },
+  {
+    "name": "Churrasqueira Inox Grande Pé Fixo 60×35×75 cm",
+    "slug": "churrasqueira-inox-grande-pe-fixo-60x35x75cm",
+    "sku": "GM-60",
+    "description": "Pé fixo, inox completo, 60cm de largura – robusta e resistente.",
+    "priceCents": 43990,
+    "material": "fechada",
+    "isActive": true,
+    "category": { "connect": { "id": 1 } },
+    "images": {
+      "create": [
+        { "url": "/images/fixa_grande.jpg", "position": 0 }
+      ]
+    }
+  },
+  {
+    "name": "Churrasqueira Inox Grande Leve 2 Grelhas",
+    "slug": "churrasqueira-inox-grande-leve-2-grelhas",
+    "sku": "I-100",
+    "description": "Leve, duas grelhas tipo moeda – muito bem avaliada no Mercado Livre.",
+    "priceCents": 48990,
+    "material": "aberta",
+    "isActive": true,
+    "category": { "connect": { "id": 1 } },
+    "images": {
+      "create": [
+        { "url": "/images/inox_duas_grelhas.png", "position": 0 }
+      ]
+    }
+  }
+]
