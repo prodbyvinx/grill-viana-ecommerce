@@ -6,6 +6,7 @@ import BuyButton from "../../_components/buybutton";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { formatBRL } from "@/lib/money";
+import Image from "next/image";
 
 export const revalidate = 60;
 
@@ -64,6 +65,10 @@ export default async function ProductPage({
           </div>
           <h1 className="text-2xl md:text-3xl font-semibold">{product.name}</h1>
           <p className="text-3xl md:text-4xl font-bold">{price}</p>
+        </div>
+
+        <div>
+          <Image src={product.images[0]?.url} alt={product.name} />
         </div>
 
         <BuyButton

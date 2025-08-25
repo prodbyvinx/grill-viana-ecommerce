@@ -13,7 +13,6 @@ export default function Home() {
             <Categories />
             <PicCarousel />
             <Conditions />
-            <Promos />
             <WhoWeAre />
             <HomeRatings />
         </>
