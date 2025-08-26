@@ -97,11 +97,11 @@ model User {
 
 // -------- Catalog --------
 model Category {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   name      String
-  slug      String   @default("sem-slug")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  slug      String    @default("sem-slug")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   products  Product[]
 }
 
@@ -109,15 +109,15 @@ model Product {
   id          Int     @id @default(autoincrement())
   name        String
   slug        String? @unique
-  sku         String? @unique
+  sku         String  @unique
   ncm         String?
   description String
-  priceCents  Int
+  priceCents  Int     @default(0)
   stockTotal  Int     @default(0)
   widthCm     Int?
   heightCm    Int?
   depthCm     Int?
-  material    String?
+  material    String? @default("")
   isActive    Boolean @default(true)
 
   // relação com Category (opcional)
@@ -130,6 +130,9 @@ model Product {
   inventory  InventoryMovement[]
   orderItems OrderItem[]
   cartItems  CartItem[]
+
+  rating      Float @default(0)
+  ratingCount Int   @default(0)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -258,7 +261,7 @@ model Order {
   billingAddress    Address? @relation("OrderBillingAddress", fields: [billingAddressId], references: [id])
 
   // Totais
-  status        String   @default("pending")
+  status        String        @default("pending")
   paymentStatus PaymentStatus @default(PENDING)
   subtotalCents Int           @default(0)
   discountCents Int           @default(0)
@@ -267,7 +270,7 @@ model Order {
 
   // Pagamento/Marketplace
   provider       PaymentProvider?
-  externalRef    String    @unique @default("")
+  externalRef    String           @unique @default("")
   mpPaymentId    String?          @unique
   mpPreferenceId String?
   mpInitPoint    String?
@@ -286,8 +289,8 @@ model Order {
   BlingSync         BlingSync?
 
   // Idempotência de webhook
-  lastPaymentId String?  // guarda o último paymentId processado
-  payments      Payment[]     // relation de pagamentos
+  lastPaymentId String? // guarda o último paymentId processado
+  payments      Payment[] // relation de pagamentos
   paymentId     Int?
 
   @@index([status, createdAt])
