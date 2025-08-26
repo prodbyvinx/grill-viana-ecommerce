@@ -3,9 +3,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import SearchBar from "./searchbar";
-import { CartProvider, ShoppingCartDropdown } from "./shoppingcart";
+import { ShoppingCartDropdown } from "./shoppingcart";
 import { AuthProvider, UserProfileDropdown } from "./logindropdown";
-import { User } from "lucide-react";
 
 export default function Header() {
   return (
@@ -58,9 +57,7 @@ export default function Header() {
 
         {/* 3. Ícones */}
         <div className="flex items-center gap-4">
-          <CartProvider>
             <ShoppingCartDropdown />
-          </CartProvider>
         </div>
         <div className="flex items-center gap-4">
           <AuthProvider>

@@ -46,7 +46,7 @@ export default function BuyButton({
     <Button
       onClick={handleBuy}
       disabled={loading}
-      className="bg-red-800 hover:bg-red-700 text-white cursor-pointer min-w-24"
+      className="bg-red-800 hover:bg-red-700 text-white cursor-pointer min-w-24 z-10"
     >
       {loading ? (
         <Loader2 className="animate-spin cursor-progress" />

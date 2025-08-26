@@ -1,7 +1,12 @@
+// src/app/api/mp/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
+import { cookies } from "next/headers";
 import { mpPayment, mpPreference } from "@/lib/mercadopago";
+import type { PaymentStatus } from "@prisma/client";
+
+export const runtime = "nodejs";
 
 type Action = "checkout" | "webhook";
 function getAction(req: Request): Action | undefined {
@@ -17,9 +22,181 @@ export async function POST(req: Request) {
   const action = getAction(req);
 
   if (action === "checkout") return handleCheckout(req);
+  if (action === "checkoutCart") return handleCheckoutCart(req);
   if (action === "webhook")  return handleWebhook(req);
 
   return NextResponse.json({ error: "Ação inválida" }, { status: 400 });
+}
+
+const CheckoutCartSchema = z.object({
+  customerEmail: z.string().email().optional(),
+});
+
+async function handleCheckoutCart(req: Request) {
+  try {
+    const body = await req.json().catch(() => ({}));
+    const { customerEmail } = CheckoutCartSchema.parse(body);
+
+    const cookieStore = await cookies();
+    const cartId = cookieStore.get("cartId")?.value;
+    if (!cartId) {
+      return NextResponse.json({ error: "Carrinho vazio" }, { status: 400 });
+    }
+
+    // Carrega itens do carrinho com preço e SKU
+    const cart = await prisma.cart.findUnique({
+      where: { id: cartId },
+      include: {
+        items: {
+          include: {
+            product: {
+              select: {
+                id: true,
+                name: true,
+                sku: true,
+                slug: true,
+                isActive: true,
+                priceCents: true,
+              },
+            },
+            variant: {
+              select: {
+                id: true,
+                name: true,
+                sku: true,
+                priceCents: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const items = cart?.items ?? [];
+    if (!items.length) {
+      return NextResponse.json({ error: "Carrinho vazio" }, { status: 400 });
+    }
+
+    // Valida todos ativos e calcula totais
+    const invalid = items.find((i) => !i.product?.isActive);
+    if (invalid) {
+      return NextResponse.json({ error: "Existe produto indisponível no carrinho" }, { status: 400 });
+    }
+
+    const mpItems = items.map((i) => {
+      const unitCents = i.variant?.priceCents ?? i.product.priceCents ?? 0;
+      const title = i.variant?.name ? `${i.product.name} - ${i.variant.name}` : i.product.name;
+      return {
+        id: String(i.variant?.id ?? i.product.id),
+        title,
+        quantity: i.quantity,
+        unit_price: Number((unitCents / 100).toFixed(2)),
+        currency_id: "BRL",
+      };
+    });
+
+    const subtotalCents = items.reduce(
+      (acc, i) => acc + i.quantity * (i.variant?.priceCents ?? i.product.priceCents ?? 0),
+      0
+    );
+
+    // Cria Order + OrderItems (snapshot)
+    const order = await prisma.order.create({
+      data: {
+        status: "pending",
+        paymentStatus: "PENDING",
+        subtotalCents,
+        discountCents: 0,
+        shippingCents: 0,
+        totalCents: subtotalCents, // ajuste se incluir frete/cupom
+        customerEmail: customerEmail ?? null,
+        externalRef: "", // setaremos depois
+        items: {
+          create: items.map((i) => {
+            const unitCents = i.variant?.priceCents ?? i.product.priceCents ?? 0;
+            return {
+              productId: i.productId ?? null,
+              variantId: i.variantId ?? null,
+              sku: i.variant?.sku ?? i.product?.sku ?? null,
+              name: i.variant?.name ? `${i.product.name} - ${i.variant.name}` : i.product.name,
+              quantity: i.quantity,
+              unitCents,
+              totalCents: unitCents * i.quantity,
+            };
+          }),
+        },
+      },
+    });
+
+    const externalRef = `gv-${order.id}`;
+    await prisma.order.update({ where: { id: order.id }, data: { externalRef } });
+
+    // Cria a Preference no MP
+    const pref = await mpPreference.create({
+      body: {
+        items: mpItems,
+        back_urls: {
+          success: `${process.env.NEXT_PUBLIC_SITE_URL}/pedido/sucesso?ref=${externalRef}`,
+          failure: `${process.env.NEXT_PUBLIC_SITE_URL}/pedido/erro?ref=${externalRef}`,
+          pending: `${process.env.NEXT_PUBLIC_SITE_URL}/pedido/pendente?ref=${externalRef}`,
+        },
+        auto_return: "approved",
+        external_reference: externalRef,
+        metadata: { cartId, orderId: order.id },
+        notification_url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/mp?action=webhook`,
+      },
+    });
+
+    await prisma.order.update({
+      where: { id: order.id },
+      data: {
+        mpPreferenceId: pref.id ?? null,
+        mpInitPoint: pref.init_point ?? null,
+      },
+    });
+
+    // Opcional: NÃO limpamos o carrinho agora; deixamos para o webhook ao aprovar
+    return NextResponse.json({
+      ok: true,
+      preferenceId: pref.id,
+      initPoint: pref.init_point,
+      externalRef,
+      orderId: order.id,
+    });
+  } catch (err: any) {
+    console.error("checkoutCart error", err);
+    return NextResponse.json(
+      { error: err?.message ?? "Erro ao iniciar checkout do carrinho" },
+      { status: 500 }
+    );
+  }
+}
+
+// ---------- helpers de status ----------
+function mapMpToPaymentStatus(s: string): PaymentStatus {
+  switch (s) {
+    case "approved": return "APPROVED";
+    case "authorized": return "AUTHORIZED";
+    case "in_process": return "IN_PROCESS";
+    case "in_mediation": return "IN_MEDIATION";
+    case "pending": return "PENDING";
+    case "rejected": return "REJECTED";
+    case "cancelled": return "CANCELLED";
+    case "refunded": return "REFUNDED";
+    case "charged_back": return "CHARGED_BACK";
+    default: return "PENDING";
+  }
+}
+
+function mapMpToOrderStatus(s: string): string {
+  switch (s) {
+    case "approved": return "paid";
+    case "refunded":
+    case "charged_back": return "refunded";
+    case "rejected":
+    case "cancelled": return "failed";
+    default: return "pending";
+  }
 }
 
 // ============= CHECKOUT =============
@@ -45,9 +222,10 @@ async function handleCheckout(req: Request) {
     const order = await prisma.order.create({
       data: {
         status: "pending",
+        paymentStatus: "PENDING",
         totalCents,
         customerEmail: customerEmail ?? null,
-        externalRef: "", // definido já já
+        externalRef: "",
       },
     });
 
@@ -77,7 +255,10 @@ async function handleCheckout(req: Request) {
 
     await prisma.order.update({
       where: { id: order.id },
-      data: { mpPreferenceId: pref.id ?? null, mpInitPoint: pref.init_point ?? null },
+      data: {
+        mpPreferenceId: pref.id ?? null,
+        mpInitPoint: pref.init_point ?? null,
+      },
     });
 
     return NextResponse.json({
@@ -106,58 +287,53 @@ async function handleWebhook(req: Request) {
     const paymentId = String(data.id);
     const payment = await mpPayment.get({ id: paymentId });
 
-    const external_reference = payment.external_reference as string | undefined;
+    const externalReference = payment.external_reference as string | undefined;
     const amount = Math.round(Number(payment.transaction_amount ?? 0) * 100);
     const mpStatus = String(payment.status ?? "");
-    const mpStatusDetail = String(payment.status_detail ?? "");
 
-    if (!external_reference) {
+    if (!externalReference) {
       return NextResponse.json({ error: "Sem external_reference" }, { status: 200 });
     }
 
-    const order = await prisma.order.findFirst({ where: { externalRef: external_reference } });
+    const order = await prisma.order.findFirst({ where: { externalRef: externalReference } });
     if (!order) {
       return NextResponse.json({ error: "Pedido não encontrado" }, { status: 200 });
     }
 
+    // idempotência
     if (order.lastPaymentId === paymentId) {
       return NextResponse.json({ ok: true, idempotent: true }, { status: 200 });
     }
 
-    const newStatus =
-      mpStatus === "approved"      ? "paid" :
-      mpStatus === "in_process"    ? "pending" :
-      mpStatus === "pending"       ? "pending" :
-      mpStatus === "rejected"      ? "failed"  :
-      mpStatus === "cancelled"     ? "failed"  :
-      mpStatus === "refunded"      ? "refunded":
-      mpStatus === "charged_back"  ? "refunded": "pending";
+    const paymentStatus = mapMpToPaymentStatus(mpStatus);
+    const orderStatus = mapMpToOrderStatus(mpStatus);
 
-    const paymentRecord = order.paymentId
-      ? await prisma.payment.update({
-          where: { id: order.paymentId }, // <-- corrige aqui
-          data: {
-            amountCents: amount,
-            status: newStatus,
-            mpPaymentId: paymentId,
-            mpStatus,
-            mpStatusDetail,
-          },
-        })
-      : await prisma.payment.create({
-          data: {
-            method: "mercadopago",
-            amountCents: amount,
-            status: newStatus,
-            mpPaymentId: paymentId,
-            mpStatus,
-            mpStatusDetail,
-          },
-        });
+    // salva/atualiza Payment por providerPaymentId
+    const paymentRecord = await prisma.payment.upsert({
+      where: { providerPaymentId: paymentId },
+      update: {
+        status: paymentStatus,
+        amountCents: amount,
+        raw: payment as any,
+      },
+      create: {
+        orderId: order.id,
+        provider: "MERCADOPAGO",
+        providerPaymentId: paymentId,
+        status: paymentStatus,
+        amountCents: amount,
+        raw: payment as any,
+      },
+    });
 
     await prisma.order.update({
       where: { id: order.id },
-      data: { status: newStatus, paymentId: paymentRecord.id, lastPaymentId: paymentId },
+      data: {
+        status: orderStatus,
+        paymentStatus,
+        paymentId: paymentRecord.id,
+        lastPaymentId: paymentId,
+      },
     });
 
     return NextResponse.json({ ok: true });

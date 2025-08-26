@@ -1,21 +1,13 @@
+import ProductControls from "../_components/productcontrols";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { prisma } from "@/lib/prisma";
-import BuyButton from "../../_components/buybutton";
-import { Badge } from "@/components/ui/badge";
 import { formatBRL } from "@/lib/money";
 import { getStaticImagesForId } from "@/lib/images";
 import { Star } from "lucide-react";
 import BackButton from "../../_components/backbutton";
 import Header from "../../_components/header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 export const revalidate = 60;
 
@@ -128,31 +120,12 @@ export default async function ProductPage(
                 </TabsContent>
               </Tabs>
             </div>
-            <div className="py-4">
-              <Select defaultValue="1">
-                <SelectTrigger className="w-auto">
-                  <SelectValue placeholder="Quantidade" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="1">1</SelectItem>
-                  <SelectItem value="2">2</SelectItem>
-                  <SelectItem value="3">3</SelectItem>
-                  <SelectItem value="4">4</SelectItem>
-                  <SelectItem value="5">5</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <p className="text-3xl md:text-4xl font-bold text-red-800">
-              {price} <span className="text-base text-black">à vista</span>
-            </p>
-            <p>em até 10x sem juros!</p>
+            <ProductControls
+              productId={product.id}
+              unitPriceCents={product.priceCents}
+              stockTotal={product.stockTotal}
+            />
           </div>
-
-          <BuyButton
-            productId={product.id}
-            disabled={product.stockTotal <= 0}
-            unitPriceCents={product.priceCents}
-          />
         </section>
       </main>
     </>
