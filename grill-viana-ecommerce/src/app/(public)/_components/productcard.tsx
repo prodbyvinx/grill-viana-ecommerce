@@ -10,6 +10,7 @@ import { Star, Eye } from "lucide-react";
 import BuyButton from "./buybutton";
 import Link from 'next/link'
 import { formatBRL } from "@/lib/money";
+import AddToCartButton from "./addtocart";
 
 export type Product = {
   id: number;
@@ -85,10 +86,10 @@ export default function ProductCard({ product }: { product: Product }) {
             R$ {product.price.toFixed(2)}
           </span>
           <BuyButton
-                    productId={product.id}            // usa o ID numérico
-                    disabled={product.stockTotal <= 0}
-                    unitPriceCents={product.price * 100}
-                  />
+            productId={product.id} // usa o ID numérico
+            disabled={product.stockTotal <= 0}
+            unitPriceCents={product.price * 100}
+          />
         </div>
       </CardContent>
     </Card>

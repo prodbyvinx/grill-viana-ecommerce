@@ -44,7 +44,7 @@ export default function CheckoutButton({ customerEmail }: { customerEmail?: stri
     <Button
       onClick={onCheckout}
       disabled={disabled}
-      className="w-full mt-3 bg-red-800 text-white hover:bg-red-700"
+      className="w-full mt-3 cursor-pointer bg-red-800 text-white hover:bg-red-700"
     >
       {loading ? "Abrindo pagamento..." : (
         <>

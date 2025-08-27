@@ -52,12 +52,12 @@ export default async function ProductPage(
       <Header />
       <BackButton />
       <main className="container mx-[5%] mt-16 py-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="relative aspect-square w-full overflow-hidden rounded-2xl border bg-background">
+        <div className="relative aspect-square w-[80%] overflow-hidden rounded-2xl border bg-background ">
           <Image
             src={images[0]}
             alt={product.name}
             fill
-            sizes="(min-width:1024px) 40vw, 90vw"
+            sizes="(max-width:1024px) 40vw, 90vw"
             className="object-contain"
             priority
           />
@@ -91,9 +91,9 @@ export default async function ProductPage(
             <div>
               <Tabs defaultValue="sobre" className="w-auto rounded-lg">
                 <TabsList className="w-full">
-                  <TabsTrigger value="sobre">Sobre</TabsTrigger>
-                  <TabsTrigger value="medidas">Medidas</TabsTrigger>
-                  <TabsTrigger value="especificacoes">
+                  <TabsTrigger value="sobre" className="cursor-pointer">Sobre</TabsTrigger>
+                  <TabsTrigger value="medidas" className="cursor-pointer">Medidas</TabsTrigger>
+                  <TabsTrigger value="especificacoes" className="cursor-pointer">
                     Especificações
                   </TabsTrigger>
                 </TabsList>
@@ -120,6 +120,7 @@ export default async function ProductPage(
                 </TabsContent>
               </Tabs>
             </div>
+            <h1 className="text-2xl font-semibold">{price}</h1>
             <ProductControls
               productId={product.id}
               unitPriceCents={product.priceCents}

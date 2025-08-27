@@ -38,7 +38,7 @@ export default function AddToCartButton({
   };
 
   return (
-    <Button onClick={onAdd} disabled={loading} className="min-w-24">
+    <Button onClick={onAdd} disabled={loading} className="min-w-24 cursor-pointer">
       {loading ? (
         <Loader2 className="animate-spin" />
       ) : (

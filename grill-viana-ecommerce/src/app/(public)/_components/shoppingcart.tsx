@@ -31,7 +31,7 @@ export function ShoppingCartDropdown() {
           <div className="relative">
             <ShoppingCart className="w-5 h-5" />
             {itemsCount > 0 && (
-              <span className="absolute -top-1 -right-1 inline-flex h-5 w-5">
+              <span className="absolute -top-2 -right-2 inline-flex h-5 w-5">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-800 opacity-20" />
                 <span className="relative inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-800 text-[11px] leading-none font-semibold text-white">
                   {itemsCount}

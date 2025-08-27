@@ -1,7 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import AddToCartButton from "@/app/(public)/_components/addtocart";
 import BuyButton from "@/app/(public)/_components/buybutton";
 
@@ -20,12 +26,14 @@ export default function ProductControls({
     <div className="space-y-4">
       <div className="py-2">
         <Select value={String(qty)} onValueChange={(v) => setQty(Number(v))}>
-          <SelectTrigger className="w-auto">
+          <SelectTrigger className="w-auto cursor-pointer">
             <SelectValue placeholder="Quantidade" />
           </SelectTrigger>
           <SelectContent>
             {[1, 2, 3, 4, 5].map((n) => (
-              <SelectItem key={n} value={String(n)}>{n}</SelectItem>
+              <SelectItem key={n} value={String(n)}>
+                {n}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>
