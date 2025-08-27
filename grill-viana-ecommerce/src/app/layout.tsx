@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
-import { Montserrat, Montserrat_Alternates } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import "./globals.css";
+import Providers from "./providers";
+import { AuthProvider } from "@/app/(public)/_components/logindropdown";
+
 
 const montserrat = Montserrat({
   variable: "--font-Montserrat",
@@ -23,7 +26,9 @@ export default function RootLayout({
       <body
         className={`${montserrat.className} antialiased`}
       >
-        {children}
+        <Providers>
+          <AuthProvider>{children}</AuthProvider>
+        </Providers>
       </body>
     </html>
   );

@@ -1,28 +1,49 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, ReactNode } from "react";
+import { useRouter } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
+
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import Image from "next/image";
-import { User as UserIcon } from "lucide-react";
+import { User as UserIcon, Loader2 } from "lucide-react";
 
-// -- Auth Context -----------------------------------------------------
+// ----------------- Auth Context (encapsula NextAuth) -----------------
 interface AuthContextValue {
   isAuthenticated: boolean;
+  loading: boolean;
+  user: {
+    id?: string | number;
+    name?: string | null;
+    email?: string | null;
+    image?: string | null;
+    role?: string | null;
+  } | null;
   login: () => void;
-  logout: () => void;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const login = () => setIsAuthenticated(true);
-  const logout = () => setIsAuthenticated(false);
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  const isAuthenticated = status === "authenticated";
+  const loading = status === "loading";
+  const user = (session?.user as any) ?? null;
+
+  const login = () => router.push("/login");
+  const logout = async () => {
+    await signOut({ callbackUrl: "/" });
+  };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, loading, user, login, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -34,45 +55,96 @@ export const useAuth = () => {
   return ctx;
 };
 
-// -- User Profile Dropdown --------------------------------------------
+// ---------------------- User Profile Dropdown ------------------------
 export function UserProfileDropdown() {
-  const { isAuthenticated, login } = useAuth();
+  const { isAuthenticated, loading, user, login, logout } = useAuth();
 
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="link" className="relative cursor-pointer w-auto hover:text-red-800">
+        <Button
+          variant="link"
+          className="relative cursor-pointer w-auto hover:text-red-800"
+          aria-label="Conta do usuário"
+        >
           <UserIcon />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-48 p-4 bg-white rounded-lg shadow-md">
+
+      <PopoverContent
+        className="w-56 p-4 bg-white rounded-lg shadow-md"
+        align="end"
+      >
         <div className="flex flex-col items-center">
           <div className="h-12 w-12 mb-2">
-            {/* logotipo da empresa */}
-            <Image src="/images/black-circle-logo.png" alt="Logo" width={48} height={48} />
+            {/* logotipo/placeholder de avatar */}
+            <Image
+              src={user?.image || "/images/black-circle-logo.png"}
+              alt="Avatar/Logo"
+              width={48}
+              height={48}
+              className="rounded-full object-cover"
+            />
           </div>
-          <p className="text-gray-800 text-sm mb-4">
-            {isAuthenticated ? "Meu Perfil" : "Perfil sem conta"}
-          </p>
-          {!isAuthenticated && (
+
+          {loading && (
+            <div className="flex items-center gap-2 py-2 text-sm text-gray-600">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Carregando...
+            </div>
+          )}
+
+          {!loading && !isAuthenticated && (
             <>
+              <p className="text-gray-800 text-sm mb-4">Perfil sem conta</p>
+
               <Link
                 href="/login"
-                className="w-full flex items-center justify-center h-8 text-base font-medium bg-red-800 text-white hover:bg-red-700 py-2 rounded-md mb-2 cursor-pointer transition-colors duration-200"
+                className="w-full flex items-center justify-center h-9 text-base font-medium bg-red-800 text-white hover:bg-red-700 rounded-md mb-2 transition-colors"
               >
                 Iniciar sessão
               </Link>
+
               <Link
                 href="/register"
-                className="w-full flex items-center justify-center h-8 text-base font-medium  bg-white text-red-800 border-red-800 border-2 hover:bg-red-800 hover:text-white rounded-md cursor-pointer transition-colors duration-200"
+                className="w-full flex items-center justify-center h-9 text-base font-medium bg-white text-red-800 border-2 border-red-800 hover:bg-red-800 hover:text-white rounded-md transition-colors"
               >
                 Criar conta
               </Link>
             </>
           )}
-          {isAuthenticated && (
+
+          {!loading && isAuthenticated && (
             <>
-              {/* Aqui você pode adicionar links de perfil e botão de logout */}
+              <div className="text-center mb-3">
+                <p className="text-sm font-medium text-gray-900">
+                  {user?.name ?? "Minha conta"}
+                </p>
+                {user?.email && (
+                  <p className="text-xs text-gray-500">{user.email}</p>
+                )}
+              </div>
+
+              <div className="w-full space-y-2">
+                <Link
+                  href="/profile"
+                  className="block w-full text-center text-sm py-2 rounded-md bg-gray-100 hover:bg-gray-200 transition-colors"
+                >
+                  Meu perfil
+                </Link>
+                <Link
+                  href="/orders"
+                  className="block w-full text-center text-sm py-2 rounded-md bg-gray-100 hover:bg-gray-200 transition-colors"
+                >
+                  Meus pedidos
+                </Link>
+                <Button
+                  onClick={logout}
+                  className="w-full h-9 bg-red-800 text-white hover:bg-red-700 rounded-md transition-colors cursor-pointer"
+                >
+                  Sair
+                </Button>
+              </div>
             </>
           )}
         </div>

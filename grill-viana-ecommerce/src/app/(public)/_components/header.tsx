@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+import { useSession } from "next-auth/react"; // 👈 novo
 import Link from "next/link";
 import Image from "next/image";
 import SearchBar from "./searchbar";
@@ -7,6 +9,13 @@ import { ShoppingCartDropdown } from "./shoppingcart";
 import { AuthProvider, UserProfileDropdown } from "./logindropdown";
 
 export default function Header() {
+  const { status } = useSession(); // "loading" | "authenticated" | "unauthenticated"
+
+  useEffect(() => {
+    // Dispara o GET que também faz o merge e fixa o cookie pro carrinho do usuário
+    fetch("/api/cart", { cache: "no-store" }).catch(() => {});
+  }, [status]); // roda na montagem e toda vez que o status mudar
+
   return (
     <header className="w-full bg-gray-50 px-6 py-4">
       <div className="max-w-[93%] mx-auto flex items-center justify-between gap-6">
@@ -29,35 +38,15 @@ export default function Header() {
 
         {/* 2. Navegação central */}
         <nav className="hidden lg:flex items-center gap-10 flex-shrink-0 ">
-          <Link
-            href="/catalogo"
-            className="text-md text-gray-700 hover:text-red-800 transition-all duration-[0.2s] font-medium"
-          >
-            Catálogo
-          </Link>
-          <Link
-            href="/faq"
-            className="text-md text-gray-700 hover:text-red-800 transition-all duration-[0.2s] font-medium"
-          >
-            FAQ
-          </Link>
-          <Link
-            href="/contato"
-            className="text-md text-gray-700 hover:text-red-800 transition-all duration-[0.2s] font-medium"
-          >
-            Contato
-          </Link>
-          <Link
-            href="/sobre"
-            className="text-md text-gray-700 hover:text-red-800 transition-all duration-[0.2s] font-medium"
-          >
-            Sobre a Loja
-          </Link>
+          <Link href="/catalogo" className="text-md text-gray-700 hover:text-red-800 transition-all duration-[0.2s] font-medium">Catálogo</Link>
+          <Link href="/faq" className="text-md text-gray-700 hover:text-red-800 transition-all duration-[0.2s] font-medium">FAQ</Link>
+          <Link href="/contato" className="text-md text-gray-700 hover:text-red-800 transition-all duration-[0.2s] font-medium">Contato</Link>
+          <Link href="/sobre" className="text-md text-gray-700 hover:text-red-800 transition-all duration-[0.2s] font-medium">Sobre a Loja</Link>
         </nav>
 
         {/* 3. Ícones */}
         <div className="flex items-center gap-4">
-            <ShoppingCartDropdown />
+          <ShoppingCartDropdown />
         </div>
         <div className="flex items-center gap-4">
           <AuthProvider>
