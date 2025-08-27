@@ -83,7 +83,7 @@ export default function LoginPage() {
         <Button
           type="submit"
           disabled={submitting}
-          className="w-full bg-red-800 hover:bg-red-700"
+          className="w-full cursor-pointer bg-red-800 hover:bg-red-700"
         >
           {submitting ? (
             <span className="flex items-center gap-2">

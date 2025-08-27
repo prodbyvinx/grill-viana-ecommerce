@@ -1,6 +1,10 @@
+'use client'
+
 import { AtSign, Instagram, PhoneCall } from "lucide-react";
 import BackButton from "../_components/backbutton";
 import Header from "../_components/header";
+import { Toaster } from "@/components/ui/sonner"
+import SacForm from "../contato/_components/sacform";
 
 export default function Contato() {
   return (
@@ -24,7 +28,7 @@ export default function Contato() {
             </span>
 
             <h2 className="font-medium text-lg">Instagram</h2>
-            <caption className="font-bold text-xl text-wrap">@grillviana</caption>
+            <span className="font-bold text-xl text-wrap">@grillviana</span>
           </div>
           <div className="flex flex-col items-center">
             <span className="flex items-center justify-center w-24 h-24 bg-red-800 rounded-full mb-4">
@@ -32,7 +36,7 @@ export default function Contato() {
             </span>
 
             <h2 className="font-medium text-lg">Telefone</h2>
-            <caption className="font-bold text-xl text-wrap">(19) 98150-4116</caption>
+            <span className="font-bold text-xl text-wrap">(19) 98150-4116</span>
           </div>
           <div className="flex flex-col items-center">
             <span className="flex items-center justify-center w-24 h-24 bg-red-800 rounded-full mb-4">
@@ -40,9 +44,24 @@ export default function Contato() {
             </span>
 
             <h2 className="font-medium text-lg">E-mail</h2>
-            <caption className="font-bold text-xl text-wrap">henrique.vendas@grillviana.com</caption>
+            <span className="font-bold text-xl text-wrap">henrique.vendas@grillviana.com</span>
           </div>
         </div>
+        <section className="mx-[5%] mt-16">
+        <div className="mx-[5%]">
+          <h2 className="text-3xl font-bold mb-4 text-center">Envie um <span className="text-red-800">e-mail!</span></h2>
+          <p className="text-center text-base text-gray-700 mb-6">
+            Fale diretamente com a gente pelo formulário.
+          </p>
+        </div>
+      </section>
+        <SacForm
+        onSubmit={async (data) => {
+          // Handle form submission
+          console.log("Form submitted:", data);
+        }}
+      />
+      <Toaster />
       </section>
     </>
   );

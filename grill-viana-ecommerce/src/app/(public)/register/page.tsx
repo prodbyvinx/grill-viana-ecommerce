@@ -125,7 +125,7 @@ export default function RegisterPage() {
           <Button
           type="submit"
           disabled={submitting}
-          className="w-full h-11"
+          className="w-full h-11 bg-red-800 hover:bg-red-700 cursor-pointer text-white"
         >
           {submitting ? (
             <span className="flex items-center gap-2">
