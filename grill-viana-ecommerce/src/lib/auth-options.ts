@@ -4,10 +4,12 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import Credentials from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { getBaseUrl } from "@/lib/base-url";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
+  pages: { signIn: "/login" },
   providers: [
     Credentials({
       name: "E-mail e senha",
@@ -39,8 +41,11 @@ export const authOptions: NextAuthOptions = {
       (session.user as any).role = token.role;
       return session;
     },
-    async redirect({ baseUrl }) {
-      return `${baseUrl}/`; // volta pra home por padrão
+    async redirect({ url, baseUrl }) {
+      const b = getBaseUrl();
+      if (url.startsWith("/")) return `${b}${url}`;
+      if (new URL(url).origin === baseUrl) return url;
+      return b;
     },
   },
   pages: { signIn: "/login" },
