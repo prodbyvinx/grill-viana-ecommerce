@@ -5,13 +5,18 @@ const prisma = new PrismaClient();
 // Tenta carregar categories.json (se existir). Se não existir, segue em frente.
 let categories: any[] = [];
 try {
-  categories = require("./categories.json");
+  categories = await import("./categories.json", { assert: { type: "json" } }).then(m => m.default);
 } catch {
-  /* ok */
+  console.log("⚠️ categories.json não encontrado, seguindo com categorias vazias.");
 }
 
 // Carrega produtos (products.json no seu formato atual)
-const products: any[] = require("./products.json");
+let products: any[] = [];
+try {
+  products = await import("./products.json", { assert: { type: "json" } }).then(m => m.default);
+} catch {
+  console.log("⚠️ products.json não encontrado, seguindo com produtos vazios.");
+}
 
 const slugify = (s: string) =>
   s
@@ -39,7 +44,7 @@ function normalizeImageUrl(url: string) {
   return `/images/${url}`;
 }
 
-function safeCents(v: any) {
+function safeInt(v: any) {
   if (typeof v === "number") return Math.round(v);
   const n = Number(v);
   return Number.isFinite(n) ? Math.round(n) : 0;
@@ -47,9 +52,33 @@ function safeCents(v: any) {
 
 function ensurePriceCents(p: any) {
   // aceita priceCents direto; senão, converte de price (reais) -> centavos
-  if (p.priceCents != null) return safeCents(p.priceCents);
+  if (p.priceCents != null) return safeInt(p.priceCents);
   const price = Number(p.price ?? 0);
   return Math.round(price * 100);
+}
+
+/**
+ * Converte peso do seed para gramas (Int).
+ * Aceita:
+ *  - weightGrams / pesoGramas / weight_g / peso_g  (já em gramas)
+ *  - weightKg / pesoKg / weight / peso            (em kg)
+ */
+function ensureWeightGrams(p: any): number | undefined {
+  const gramFields = ["weightGrams", "pesoGramas", "weight_g", "peso_g"];
+  for (const key of gramFields) {
+    if (p?.[key] != null) {
+      const n = Number(p[key]);
+      if (Number.isFinite(n) && n > 0) return Math.round(n);
+    }
+  }
+  const kgFields = ["weightKg", "pesoKg", "weight", "peso"];
+  for (const key of kgFields) {
+    if (p?.[key] != null) {
+      const n = Number(p[key]);
+      if (Number.isFinite(n) && n > 0) return Math.round(n * 1000);
+    }
+  }
+  return undefined;
 }
 
 function deriveSkuFromSlug(slug: string | undefined) {
@@ -68,7 +97,7 @@ async function main() {
     });
   }
 
-  // 2) Produtos (+ imagens garantidas, rating e sku)
+  // 2) Produtos (+ imagens, rating, sku e weightGrams)
   for (const raw of products) {
     const slug = raw.slug ?? slugify(String(raw.name ?? ""));
     if (!slug) {
@@ -77,16 +106,16 @@ async function main() {
     }
 
     const priceCents = ensurePriceCents(raw);
+    const weightGrams = ensureWeightGrams(raw);
 
     // Normaliza lista de imagens
     const imagesCreate = imagesFromSeed(raw).map((it) => ({
       url: normalizeImageUrl(String(it.url)),
-      position: safeCents(it.position) || 0,
+      position: safeInt(it.position) || 0,
     }));
 
-    // rating (novos campos no schema)
-    const rating = safeCents(raw.rating ?? 0);
-    const ratingCount = safeCents(raw.ratingCount ?? 0);
+    const rating = safeInt(raw.rating ?? 0);
+    const ratingCount = safeInt(raw.ratingCount ?? 0);
 
     // Tenta um SKU determinístico a partir do slug se não vier no JSON
     let skuCandidate = (raw.sku ?? "").toString().trim();
@@ -100,10 +129,11 @@ async function main() {
         description: String(raw.description ?? ""),
         material: raw.material ?? "",
         priceCents,
-        sku: skuCandidate || null, // pode ficar nulo temporariamente; ajeitamos abaixo
+        sku: skuCandidate || null,
         isActive: true,
         rating,
         ratingCount,
+        ...(weightGrams != null ? { weightGrams } : {}),
 
         ...(raw.category
           ? { category: raw.category }
@@ -126,10 +156,11 @@ async function main() {
         description: String(raw.description ?? ""),
         material: raw.material ?? "",
         priceCents,
-        sku: skuCandidate || null, // pode ficar nulo temporariamente; ajeitamos abaixo
+        sku: skuCandidate || null,
         isActive: true,
         rating,
         ratingCount,
+        ...(weightGrams != null ? { weightGrams } : {}),
 
         ...(raw.category
           ? { category: raw.category }

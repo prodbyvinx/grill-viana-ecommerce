@@ -36,14 +36,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const user = (session?.user as any) ?? null;
 
   const login = () => router.push("/login");
+
+  // ⬇️ ALTERE AQUI
   const logout = async () => {
-    await signOut({ callbackUrl: "/" });
+    try {
+      // 1) encerra sessão do NextAuth sem redirecionar automaticamente
+      await signOut({ redirect: false });
+
+      // 2) “guestiza” o carrinho no backend (troca/limpa cookie cartId)
+      await fetch("/api/cart/on-logout", { method: "POST", cache: "no-store" });
+    } catch (e) {
+      // opcional: log/telemetria
+      console.error("Erro no logout/on-logout:", e);
+    } finally {
+      // 3) agora sim, redireciona e dá refresh no cache do app router
+      router.push("/");
+      router.refresh();
+    }
   };
 
   return (
-    <AuthContext.Provider
-      value={{ isAuthenticated, loading, user, login, logout }}
-    >
+    <AuthContext.Provider value={{ isAuthenticated, loading, user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
@@ -58,6 +71,14 @@ export const useAuth = () => {
 // ---------------------- User Profile Dropdown ------------------------
 export function UserProfileDropdown() {
   const { isAuthenticated, loading, user, login, logout } = useAuth();
+  const [leaving, setLeaving] = React.useState(false);
+
+  async function handleClick() {
+    if (leaving) return;
+    setLeaving(true);
+    await logout();
+    // não precisa setar false: haverá navegação
+  }
 
   return (
     <Popover>
@@ -139,10 +160,11 @@ export function UserProfileDropdown() {
                   Meus pedidos
                 </Link>
                 <Button
-                  onClick={logout}
+                  onClick={handleClick}
+                  disabled={leaving}
                   className="w-full h-9 bg-red-800 text-white hover:bg-red-700 rounded-md transition-colors cursor-pointer"
                 >
-                  Sair
+                  {leaving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Sair"}
                 </Button>
               </div>
             </>

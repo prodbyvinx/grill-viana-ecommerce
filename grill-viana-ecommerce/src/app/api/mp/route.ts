@@ -37,7 +37,7 @@ async function handleCheckoutCart(req: Request) {
     const body = await req.json().catch(() => ({}));
     const { customerEmail } = CheckoutCartSchema.parse(body);
 
-    const cookieStore = await cookies();
+    const cookieStore = cookies();
     const cartId = cookieStore.get("cartId")?.value;
     if (!cartId) {
       return NextResponse.json({ error: "Carrinho vazio" }, { status: 400 });

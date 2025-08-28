@@ -3,6 +3,9 @@ import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
+import { setCartCookie } from "@/lib/cart-cookie";
+import { ensureMutableCartId } from "@/lib/server/cart-guard";
+
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -22,16 +25,20 @@ async function getSessionUserId() {
   return id ? Number(id) : null;
 }
 
+const res = () => {
+  NextResponse.json({ ok: true, action: "forked", newCartId: newCart.id });
+  setCartCookie(res, newCart.id);
+  return res;
+};
+
 async function getCartId() {
-  const cookieStore = await cookies();
+  const cookieStore = cookies(); // <- sem await
   return cookieStore.get("cartId")?.value;
 }
 
 async function ensureCartFollowingSession(opts: { createForGuest: boolean }) {
   const userId = await getSessionUserId();
-
-  // carrinho do cookie (guest)
-  const cookieStore = await cookies();
+  const cookieStore = cookies(); // <- sem await
   let cookieCartId = cookieStore.get("cartId")?.value || null;
   let cookieCart = cookieCartId
     ? await prisma.cart.findUnique({
@@ -112,16 +119,6 @@ async function ensureCartFollowingSession(opts: { createForGuest: boolean }) {
   return { cartId: cookieCart?.id ?? null, userId: null };
 }
 
-async function setCartCookie(res: NextResponse, cartId: string) {
-  res.cookies.set("cartId", cartId, {
-    path: "/",
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    maxAge: 60 * 60 * 24 * 30, // 30d
-  });
-}
-
 export async function GET() {
   try {
     const { cartId } = await ensureCartFollowingSession({
@@ -166,7 +163,13 @@ export async function GET() {
   }
 }
 
+/** ==========
+ *  POST (usa ensureMutableCartId)
+ *  ========== */
 export async function POST(req: NextRequest) {
+  const { productId, quantity = 1 } = await req.json();
+   const { cartId, setCookieTo } = await ensureMutableCartId();
+
   try {
     const body = await req.json();
     const productId = Number(body?.productId);
@@ -180,10 +183,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // usa helper (cria guest se necessário; se logado, usa o carrinho do user)
-    const { cartId } = await ensureCartFollowingSession({
-      createForGuest: true,
-    });
+    // HARDENING: obtém carrinho seguro para mutação
+    const { cartId, setCookieTo } = await ensureMutableCartId();
+
     // checa produto ativo e obtém preço
     const product = await prisma.product.findUnique({
       where: { id: productId },
@@ -207,7 +209,7 @@ export async function POST(req: NextRequest) {
 
     // adiciona ou incrementa item
     const existing = await prisma.cartItem.findFirst({
-      where: { cartId: cartId!, productId, variantId: variantId ?? null },
+      where: { cartId, productId, variantId: variantId ?? null },
     });
 
     if (existing) {
@@ -218,7 +220,7 @@ export async function POST(req: NextRequest) {
     } else {
       await prisma.cartItem.create({
         data: {
-          cartId: cartId!,
+          cartId,
           productId,
           variantId,
           quantity,
@@ -229,12 +231,12 @@ export async function POST(req: NextRequest) {
 
     // snapshot atualizado
     const items = await prisma.cartItem.findMany({
-      where: { cartId: cartId! },
+      where: { cartId },
       select: { quantity: true, unitCents: true },
     });
 
     const res = NextResponse.json({ ok: true, summary: computeSummary(items) });
-    await setCartCookie(res, cartId!);
+    if (setCookieTo) await setCartCookie(res, setCookieTo);
     return res;
   } catch (e: any) {
     return NextResponse.json(
@@ -242,8 +244,18 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
+
+  await prisma.cartItem.create({
+    data: { cartId, productId, quantity, unitCents: 0 /* defina conforme seu preço */ },
+  });
+  const res = NextResponse.json({ ok: true, cartId });
+  if (setCookieTo !== undefined) setCartCookie(res, setCookieTo);
+  return res;
 }
 
+/** ==========
+ *  PUT (usa ensureMutableCartId)
+ *  ========== */
 export async function PUT(req: NextRequest) {
   try {
     const body = await req.json();
@@ -258,14 +270,7 @@ export async function PUT(req: NextRequest) {
     if (!Number.isFinite(quantity))
       return NextResponse.json({ error: "quantity inválido" }, { status: 400 });
 
-    const { cartId } = await ensureCartFollowingSession({
-      createForGuest: false,
-    });
-    if (!cartId)
-      return NextResponse.json(
-        { error: "Carrinho não encontrado" },
-        { status: 400 }
-      );
+    const { cartId, setCookieTo } = await ensureMutableCartId();
 
     if (quantity <= 0) {
       await prisma.cartItem.deleteMany({ where: { id: itemId, cartId } });
@@ -280,7 +285,10 @@ export async function PUT(req: NextRequest) {
       where: { cartId },
       select: { quantity: true, unitCents: true },
     });
-    return NextResponse.json({ ok: true, summary: computeSummary(items) });
+
+    const res = NextResponse.json({ ok: true, summary: computeSummary(items) });
+    if (setCookieTo) await setCartCookie(res, setCookieTo);
+    return res;
   } catch (e: any) {
     return NextResponse.json(
       { error: e?.message ?? "Erro ao atualizar quantidade" },
@@ -289,25 +297,23 @@ export async function PUT(req: NextRequest) {
   }
 }
 
+/** ==========
+ *  DELETE (usa ensureMutableCartId)
+ *  ========== */
 export async function DELETE(req: NextRequest) {
   try {
     const url = new URL(req.url);
     const clearAll = url.searchParams.get("all");
-    const { cartId } = await ensureCartFollowingSession({
-      createForGuest: false,
-    });
-    if (!cartId)
-      return NextResponse.json(
-        { error: "Carrinho não encontrado" },
-        { status: 400 }
-      );
+    const { cartId, setCookieTo } = await ensureMutableCartId();
 
     if (clearAll === "1" || clearAll === "true") {
       await prisma.cartItem.deleteMany({ where: { cartId } });
-      return NextResponse.json({
+      const res = NextResponse.json({
         ok: true,
         summary: { itemsCount: 0, totalCents: 0 },
       });
+      if (setCookieTo) await setCartCookie(res, setCookieTo);
+      return res;
     }
 
     const body = await req.json().catch(() => ({}));
@@ -324,7 +330,10 @@ export async function DELETE(req: NextRequest) {
       where: { cartId },
       select: { quantity: true, unitCents: true },
     });
-    return NextResponse.json({ ok: true, summary: computeSummary(items) });
+
+    const res = NextResponse.json({ ok: true, summary: computeSummary(items) });
+    if (setCookieTo) await setCartCookie(res, setCookieTo);
+    return res;
   } catch (e: any) {
     return NextResponse.json(
       { error: e?.message ?? "Erro ao remover item" },

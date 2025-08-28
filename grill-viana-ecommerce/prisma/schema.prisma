@@ -39,10 +39,11 @@ model Product {
   ncm         String?
   priceCents  Int                 @default(0)
   stockTotal  Int                 @default(0)
+  sku         String?             @unique
   depthCm     Int?
   heightCm    Int?
-  sku         String?             @unique
   widthCm     Int?
+  weightGrams Int?
   id          Int                 @id @default(autoincrement())
   categoryId  Int?
   material    String?             @default("")
