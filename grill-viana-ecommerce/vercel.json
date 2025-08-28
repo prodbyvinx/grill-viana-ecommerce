@@ -1,13 +1,6 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
-    "api/**": { "runtime": "nodejs18.x", "memory": 1024, "maxDuration": 60 }
-  },
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "X-Robots-Tag", "value": "noindex" }
-      ]
-    }
-  ]
+    "api/**": { "runtime": "nodejs20.x", "memory": 1024, "maxDuration": 60 }
+  }
 }
