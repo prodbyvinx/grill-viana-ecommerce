@@ -4,22 +4,12 @@ import { cookies } from "next/headers";
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth-options";
+import { setCartCookie } from "@/lib/cart-cookie";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-async function setCartCookie(res: NextResponse, cartId: string) {
-  res.cookies.set("cartId", cartId, {
-    httpOnly: true,
-    sameSite: "lax",
-    path: "/",
-    // secure: process.env.NODE_ENV === "production",
-    maxAge: 60 * 60 * 24 * 30, // 30 dias
-  });
-}
-
 export async function POST() {
-  // 1) precisa estar logado
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
@@ -50,6 +40,12 @@ export async function POST() {
       })
     : null;
 
+    if (guestCart && guestCart.userId === userId) {
+    const res = NextResponse.json({ ok: true, cartId: guestCart.id, merged: false });
+    setCartCookie(res, guestCart.id);
+    return res;
+  }
+
   // 3) carregar carrinho ativo do usuário
   const userCart = await prisma.cart.findFirst({
     where: { userId, status: "ACTIVE" },
@@ -74,22 +70,20 @@ export async function POST() {
   }
 
   const guestHasItems = (guestCart?.items?.length ?? 0) > 0;
-  const userHasCart = !!userCart;
   const userHasItems = (userCart?.items?.length ?? 0) > 0;
 
   // B) Convidado TEM itens e usuário NÃO tem carrinho -> adotar guest (atribui userId)
-  if (guestHasItems && !userHasCart) {
+  if (guestHasItems && !userCart) {
     const updated = await prisma.cart.update({
       where: { id: guestCart!.id },
       data: { userId, status: "ACTIVE" },
       select: { id: true },
     });
     const res = NextResponse.json({ ok: true, cartId: updated.id, adopted: true });
-    await setCartCookie(res, updated.id);
+    setCartCookie(res, updated.id);
     return res;
   }
 
-  // A) Ambos têm itens -> mescla no carrinho do usuário e apaga o do convidado
   if (guestHasItems && userHasItems) {
     await prisma.$transaction(async (tx) => {
       for (const gi of guestCart!.items) {
@@ -128,7 +122,7 @@ export async function POST() {
   }
 
   // C) convidado vazio + usuário com carrinho -> manter userCart (NÃO sobrescrever)
-  if (!guestHasItems && userHasCart) {
+  if (!guestHasItems && userCart) {
     if (guestCart) {
       // opcional: deletar o carrinho vazio do convidado
       await prisma.cart.delete({ where: { id: guestCart.id } }).catch(() => {});
@@ -147,6 +141,6 @@ export async function POST() {
     await prisma.cart.delete({ where: { id: guestCart.id } }).catch(() => {});
   }
   const res = NextResponse.json({ ok: true, cartId: created.id, createdEmpty: true });
-  await setCartCookie(res, created.id);
+  setCartCookie(res, created.id);
   return res;
 }

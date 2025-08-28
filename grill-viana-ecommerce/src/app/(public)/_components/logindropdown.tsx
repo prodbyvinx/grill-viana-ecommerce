@@ -71,14 +71,17 @@ export const useAuth = () => {
 // ---------------------- User Profile Dropdown ------------------------
 export function UserProfileDropdown() {
   const { isAuthenticated, loading, user, login, logout } = useAuth();
-  const [leaving, setLeaving] = React.useState(false);
+  const [leaving] = React.useState(false);
 
-  async function handleClick() {
-    if (leaving) return;
-    setLeaving(true);
-    await logout();
-    // não precisa setar false: haverá navegação
+  const logoutAction = async () => {
+  try {
+    await signOut({ redirect: false });                // encerra a sessão
+    await fetch("/api/cart/on-logout", { method: "POST", cache: "no-store" }); // troca cookie
+  } finally {
+    router.push("/");
+    router.refresh();
   }
+};
 
   return (
     <Popover>
@@ -160,7 +163,7 @@ export function UserProfileDropdown() {
                   Meus pedidos
                 </Link>
                 <Button
-                  onClick={handleClick}
+                  onClick={logoutAction}
                   disabled={leaving}
                   className="w-full h-9 bg-red-800 text-white hover:bg-red-700 rounded-md transition-colors cursor-pointer"
                 >
