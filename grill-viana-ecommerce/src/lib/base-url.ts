@@ -1,6 +1,6 @@
 import { headers } from "next/headers";
 
-export function getBaseUrl() {
+export async function getBaseUrl() {
   // 1) Preview/Prod na Vercel
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
   // 2) Dev local

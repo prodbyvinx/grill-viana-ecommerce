@@ -8,6 +8,7 @@ import { Star } from "lucide-react";
 import BackButton from "../../_components/backbutton";
 import Header from "../../_components/header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import ProductReviews from "../_components/productreviews";
 
 export const revalidate = 60;
 
@@ -127,6 +128,9 @@ export default async function ProductPage(
               stockTotal={product.stockTotal}
             />
           </div>
+        </section>
+        <section>
+          <ProductReviews reviews={product.reviews} />
         </section>
       </main>
     </>

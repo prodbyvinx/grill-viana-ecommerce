@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
+import BackButton from "../_components/backbutton";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -49,65 +50,68 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen mx-[5%] flex flex-col justify-center items-center">
-      <div className="mb-16">
-        <Image
-          src="/images/black-logo.png"
-          alt="Logo"
-          width={250}
-          height={250}
-        />
-      </div>
-      <h1 className="font-semibold text-3xl mb-16">Entre na sua conta</h1>
-      <form
-        onSubmit={onSubmit}
-        className="space-y-6 w-[30vw] max-w-[520px] min-w-[300px]"
-      >
-        <Input
-          type="email"
-          placeholder="E-mail"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className="h-12"
-        />
-        <Input
-          type="password"
-          placeholder="Senha"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          className="h-12"
-        />
-        {error && <p className="text-sm text-red-500">{error}</p>}
-        <Button
-          type="submit"
-          disabled={submitting}
-          className="w-full cursor-pointer bg-red-800 hover:bg-red-700"
+    <>
+      <BackButton />
+      <main className="min-h-screen mx-[5%] flex flex-col justify-center items-center">
+        <div className="mb-16">
+          <Image
+            src="/images/black-logo.png"
+            alt="Logo"
+            width={250}
+            height={250}
+          />
+        </div>
+        <h1 className="font-semibold text-3xl mb-16">Entre na sua conta</h1>
+        <form
+          onSubmit={onSubmit}
+          className="space-y-6 w-[30vw] max-w-[520px] min-w-[300px]"
         >
-          {submitting ? (
-            <span className="flex items-center gap-2">
-              <Loader2 className="h-4 w-4 animate-spin" /> Entrando...
-            </span>
-          ) : (
-            "Entrar"
-          )}
-        </Button>
-        <div className="text-center">
-          <Link
-            href="/forgot-password"
-            className="text-sm text-gray-500 hover:underline"
+          <Input
+            type="email"
+            placeholder="E-mail"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="h-12"
+          />
+          <Input
+            type="password"
+            placeholder="Senha"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="h-12"
+          />
+          {error && <p className="text-sm text-red-500">{error}</p>}
+          <Button
+            type="submit"
+            disabled={submitting}
+            className="w-full cursor-pointer bg-red-800 hover:bg-red-700"
           >
-            Esqueci minha senha
-          </Link>
-        </div>
-        <div className="text-center text-sm text-gray-500 mt-4">
-          Não tem uma conta?{" "}
-          <Link href="/register" className="text-red-800 hover:underline">
-            Cadastre-se
-          </Link>
-        </div>
-      </form>
-    </main>
+            {submitting ? (
+              <span className="flex items-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin" /> Entrando...
+              </span>
+            ) : (
+              "Entrar"
+            )}
+          </Button>
+          <div className="text-center">
+            <Link
+              href="/forgot-password"
+              className="text-sm text-gray-500 hover:underline"
+            >
+              Esqueci minha senha
+            </Link>
+          </div>
+          <div className="text-center text-sm text-gray-500 mt-4">
+            Não tem uma conta?{" "}
+            <Link href="/register" className="text-red-800 hover:underline">
+              Cadastre-se
+            </Link>
+          </div>
+        </form>
+      </main>
+    </>
   );
 }

@@ -18,6 +18,7 @@ model User {
   addresses    Address[]
   carts        Cart[]
   orders       Order[]
+  reviews      Review[]
 }
 
 model Category {
@@ -56,6 +57,7 @@ model Product {
   category    Category?           @relation(fields: [categoryId], references: [id])
   images      ProductImage[]
   variants    ProductVariant[]
+  reviews     Review[]
 
   @@index([isActive])
 }
@@ -300,6 +302,19 @@ model Coupon {
   createdAt  DateTime   @default(now())
 }
 
+model Review {
+  id        Int      @id @default(autoincrement())
+  rating    Int
+  text      String
+  createdAt DateTime @default(now())
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id])
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([productId])
+}
+
 enum UserRole {
   ADMIN
   CUSTOMER
@@ -346,6 +361,7 @@ enum WebhookProvider {
 enum WebhookStatus {
   RECEIVED
   PROCESSED
+
   ERROR
 }
 

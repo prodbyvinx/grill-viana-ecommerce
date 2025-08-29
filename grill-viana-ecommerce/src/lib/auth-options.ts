@@ -42,7 +42,7 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
     async redirect({ url, baseUrl }) {
-      const b = getBaseUrl();
+      const b = await getBaseUrl();
       if (url.startsWith("/")) return `${b}${url}`;
       if (new URL(url).origin === baseUrl) return url;
       return b;
