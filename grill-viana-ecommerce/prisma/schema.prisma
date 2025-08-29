@@ -313,6 +313,7 @@ model Review {
   user      User     @relation(fields: [userId], references: [id])
 
   @@index([productId])
+  @@unique([userId, productId], name: "review_user_product_unique")
 }
 
 enum UserRole {

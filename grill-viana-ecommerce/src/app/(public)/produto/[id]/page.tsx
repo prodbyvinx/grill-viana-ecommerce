@@ -34,6 +34,16 @@ export default async function ProductPage(
       isActive: true,
       rating: true,
       ratingCount: true,
+      reviews: {
+        orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          rating: true,
+          text: true,
+          createdAt: true,
+          user: { select: { name: true } }, // <- sem image
+        },
+      },
     },
   });
 
@@ -45,8 +55,6 @@ export default async function ProductPage(
   const price = formatBRL(product.priceCents);
   const images = getStaticImagesForId(product.id);
   const stars = Math.max(0, Math.min(5, product.rating ?? 0));
-
-  console.log(product.sku);
 
   return (
     <>
@@ -66,61 +74,35 @@ export default async function ProductPage(
 
         <section className="space-y-4">
           <div className="space-y-2">
-            <h1 className="text-2xl md:text-3xl font-semibold">
-              {product.name}
-            </h1>
+            <h1 className="text-2xl md:text-3xl font-semibold">{product.name}</h1>
             <h2 className="text-sm">cód. {product.sku ?? "-"}</h2>
             <div>
               <div className="flex items-center gap-1">
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
-                    className={`w-4 h-4 ${
-                      i < stars
-                        ? "fill-yellow-400 text-yellow-400"
-                        : "text-gray-300"
-                    }`}
+                    className={`w-4 h-4 ${i < stars ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
                   />
                 ))}
                 {!!product.ratingCount && (
-                  <span className="text-sm text-slate-500 ml-1">
-                    ({product.ratingCount})
-                  </span>
+                  <span className="text-sm text-slate-500 ml-1">({product.ratingCount})</span>
                 )}
               </div>
             </div>
+
             <div>
               <Tabs defaultValue="sobre" className="w-auto rounded-lg">
                 <TabsList className="w-full">
                   <TabsTrigger value="sobre" className="cursor-pointer">Sobre</TabsTrigger>
                   <TabsTrigger value="medidas" className="cursor-pointer">Medidas</TabsTrigger>
-                  <TabsTrigger value="especificacoes" className="cursor-pointer">
-                    Especificações
-                  </TabsTrigger>
+                  <TabsTrigger value="especificacoes" className="cursor-pointer">Especificações</TabsTrigger>
                 </TabsList>
-                <TabsContent value="sobre">
-                  Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-                  Natus dignissimos officia obcaecati tempore veritatis voluptas
-                  tenetur ad aliquam ea maxime voluptates, assumenda
-                  consequuntur ipsa veniam architecto distinctio illo placeat
-                  nostrum!
-                </TabsContent>
-                <TabsContent value="medidas">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus
-                  dignissimos officia obcaecati tempore veritatis voluptas
-                  tenetur ad aliquam ea maxime voluptates, assumenda
-                  consequuntur ipsa veniam architecto distinctio illo placeat
-                  nostrum!
-                </TabsContent>
-                <TabsContent value="especificacoes">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus
-                  dignissimos officia obcaecati tempore veritatis voluptas
-                  tenetur ad aliquam ea maxime voluptates, assumenda
-                  consequuntur ipsa veniam architecto distinctio illo placeat
-                  nostrum!
-                </TabsContent>
+                <TabsContent value="sobre">Lorem ipsum…</TabsContent>
+                <TabsContent value="medidas">Lorem ipsum…</TabsContent>
+                <TabsContent value="especificacoes">Lorem ipsum…</TabsContent>
               </Tabs>
             </div>
+
             <h1 className="text-2xl font-semibold">{price}</h1>
             <ProductControls
               productId={product.id}
@@ -129,8 +111,9 @@ export default async function ProductPage(
             />
           </div>
         </section>
+
         <section>
-          <ProductReviews reviews={product.reviews} />
+          <ProductReviews reviews={product.reviews} productId={product.id} />
         </section>
       </main>
     </>
